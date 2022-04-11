@@ -13,5 +13,5 @@ Terraform code to deploy resources in hertzner cloud
 
 # Infrastructure Diagram
 
-![infra_diag](https://user-images.githubusercontent.com/103216595/162817884-d36f5f20-96c4-4aa2-bcd4-f507b4d76c33.jpg)
+![infra_diag](https://user-images.githubusercontent.com/103216595/162819662-c2b3016b-839d-4ae2-acf6-56aed45b6737.png)
 
