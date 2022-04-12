@@ -1,17 +1,21 @@
-# terraform-hertzner
+# terraform-hetzner
 Terraform code to deploy resources in hertzner cloud
 
-# what it does
-1. Deploys VMs
-2. Configures consul cluster (3 VMs)
-3. Configures nomad cluster (3 servers + `N` clients)
-4. Stores the tfstate in s3 or terraform cloud
+# What it does
+1. Deploys VMs for bastion, consul, nomad cluster with terraform
+2. Stores the tfstate in s3 or terraform cloud
+3. Bastion/Jump host for ssh access. We can add other binaries like nomad (or terraform) if needed for live env troubleshooting.
+4. Configures consul servers (3 VMs)
+5. Configures nomad servers (3 VMs)
+6. Configures nomad clients (`N` clients)
 
 # How: (Add details as we go)
 1. Clone the repo to your local machine
 2. Run terraform init, plan and apply
+3. `Possible addition later: Atlantis webhook to deploy these with github PRs. Needs an atlantis host with internet/public access.`
 
 # Infrastructure Diagram
 
-![infra_diag](https://user-images.githubusercontent.com/103216595/162819662-c2b3016b-839d-4ae2-acf6-56aed45b6737.png)
+![infra_diag](https://user-images.githubusercontent.com/103216595/162854278-85b2de02-5f83-446a-b98b-6cceade8ce13.png)
+
 
