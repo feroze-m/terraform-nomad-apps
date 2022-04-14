@@ -10,7 +10,9 @@ Terraform code to deploy resources in hertzner cloud
 6. Configures nomad clients (`N` clients)
 
 # How: (Add details as we go)
-1. Clone the repo to your local machine
+1. Clone this repo to your local machine
+2. Log into the Hetzner account. Generate an api token with name terraform-<project-name>
+    * Save the token locally in secrets.tfvars. (will try to make this work at run time using s3 url or terraform cloud)
 2. Run terraform init, plan and apply
 3. `Possible addition later: Atlantis webhook to deploy these with github PRs. Needs an atlantis host with internet/public access.`
 
