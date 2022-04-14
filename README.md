@@ -21,3 +21,8 @@ Terraform code to deploy resources in hertzner cloud
 ![infra_diag](https://user-images.githubusercontent.com/103216595/162854278-85b2de02-5f83-446a-b98b-6cceade8ce13.png)
 
 
+#Hetzner Cloud has an api, which can be very helpful while working with cli and terraform
+
+* Repo: https://github.com/hetznercloud/cli
+* export HCLOUD_TOKEN=xxxx-token-xxxx and cli is ready to use
+
