@@ -1,8 +1,8 @@
 resource "hcloud_server" "bastion" {
   name = "bastion01"
   server_type = "cx11"
-  image = data.hcloud_image.image_debian10.id
-  datacenter = data.hcloud_datacenters.ds_euro1
+  image = var.hcloud_image
+  datacenter = var.hcloud_datacenters
 
   network {
     network_id = hcloud_network.network.id

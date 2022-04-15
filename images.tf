@@ -4,3 +4,4 @@ data "hcloud_image" "image_debian10" {
 data "hcloud_image" "image_debian11" {
   name = "debian-11"
 }
+
