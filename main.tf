@@ -8,6 +8,11 @@ resource "hcloud_ssh_key" "default" {
   public_key = file("~/.ssh/id_rsa.pub")
 }
 
+data "hcloud_image" "base_image" {
+  name = var.base_image_name
+}
+
+
 #To `spread` the VMs on separate physical servers
 resource "hcloud_placement_group" "placement-group-1" {
   name = "placement-group-1"

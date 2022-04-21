@@ -1,8 +1,9 @@
 resource "hcloud_server" "bastion" {
   name = "bastion01"
-  server_type = "cx11"
-  image = var.hcloud_image
-  datacenter = var.hcloud_datacenters
+  count = var.bastion_count
+  server_type = var.bastion_server_type
+  image = data.hcloud_image.base_image
+  datacenter = var.datacenter_name
 
   network {
     network_id = hcloud_network.network.id
@@ -15,3 +16,13 @@ resource "hcloud_server" "bastion" {
     hcloud_network_subnet.proxima_subnet
   ]
 }  
+
+variable "bastion_server_type" {
+  type  = string
+  default = "cx11"
+}
+
+variable "bastion_count" {
+  type = string
+  default = 1
+}

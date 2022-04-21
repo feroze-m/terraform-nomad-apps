@@ -13,13 +13,23 @@ variable "hcloud_network_subnet" {
   description = "Default Subnet"
 }
 
-variable "hcloud_datacenters" {
-  type = string
-  default = "nbg1-dc3"
-  description = "Default Datacenter"
+variable "datacenter_name" {
+  type = list(string)
+  default = ["nbg1-dc3"]
+  description = "Default to Nuremberg 1 DC3"
 }
 
-variable "hcloud_image" {
+variable "base_image_name" {
   type = string
   default = "debian-10"
+}
+
+variable "lb_count" {
+  type    = string
+  default = 1
+}
+
+variable "hcloud_token" {
+  type    = string
+  default = proxima_token
 }
