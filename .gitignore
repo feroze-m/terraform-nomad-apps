@@ -1,2 +1,5 @@
 
 *secret*
+*.pem
+*tfstate*
+*.terraform
