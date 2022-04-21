@@ -14,6 +14,9 @@ Terraform code to deploy resources in hertzner cloud
 2. Log into the Hetzner account. Generate an api token with name terraform-<project-name>
     * Save the token locally in secrets.tfvars. (will try to make this work at run time using s3 url or terraform cloud)
 2. Run terraform init, plan and apply
+    * terraform init
+    * terraform plan --var-file=envs/proxima.tfvars --var-file=envs/secrets.tfvars
+    * terraform apply --var-file=envs/proxima.tfvars --var-file=envs/secrets.tfvars
 3. `Possible addition later: Atlantis webhook to deploy these with github PRs. Needs an atlantis host with internet/public access.`
 
 # Infrastructure Diagram
