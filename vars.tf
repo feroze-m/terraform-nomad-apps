@@ -19,17 +19,23 @@ variable "datacenter_name" {
   description = "Default to Nuremberg 1 DC3"
 }
 
-variable "base_image_name" {
+variable "location_name" {
+  type = string
+  default = "nbg1"
+  description = "Default to Nuremberg 1"
+}
+
+variable "baseimage_name" {
   type = string
   default = "debian-10"
 }
 
 variable "lb_count" {
   type    = string
-  default = 1
+  default = 0
 }
 
 variable "hcloud_token" {
   type    = string
-  default = proxima_token
+  default = "proxima_token"
 }

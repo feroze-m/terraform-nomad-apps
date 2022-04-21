@@ -1,17 +1,11 @@
-# Configure the Hetzner Cloud Provider
-provider "hcloud" {
-  token = var.hcloud_token
-}
-
-resource "hcloud_ssh_key" "default" {
+/*resource "hcloud_ssh_key" "default" {
   name       = "Terraform"
-  public_key = file("~/.ssh/id_rsa.pub")
+  public_key = file("./${var.ssh_key_name}.pub")
 }
-
-data "hcloud_image" "base_image" {
-  name = var.base_image_name
+*/
+data "hcloud_image" "baseimage_name" {
+  name = var.baseimage_name
 }
-
 
 #To `spread` the VMs on separate physical servers
 resource "hcloud_placement_group" "placement-group-1" {
@@ -27,9 +21,8 @@ resource "hcloud_network" "network" {
   ip_range = "10.0.0.0/16"
 }
 
-resource "hcloud_network_subnet" "subnet" {
+resource "hcloud_network_subnet" "proxima_subnet" {
   type         = "cloud"
-  name         = var.hcloud_network_subnet
   network_id   = hcloud_network.network.id
   network_zone = "eu-central"
   ip_range     = "10.0.1.0/24"

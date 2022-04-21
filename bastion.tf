@@ -2,8 +2,8 @@ resource "hcloud_server" "bastion" {
   name = "bastion01"
   count = var.bastion_count
   server_type = var.bastion_server_type
-  image = data.hcloud_image.base_image
-  datacenter = var.datacenter_name
+  image = var.baseimage_name
+  location = var.location_name
 
   network {
     network_id = hcloud_network.network.id
@@ -24,5 +24,5 @@ variable "bastion_server_type" {
 
 variable "bastion_count" {
   type = string
-  default = 1
+  default = 0
 }
