@@ -8,8 +8,8 @@ data "hcloud_image" "baseimage_name" {
 }
 
 #To `spread` the VMs on separate physical servers
-resource "hcloud_placement_group" "placement-group-1" {
-  name = "placement-group-1"
+resource "hcloud_placement_group" "pg-1" {
+  name = "pg-1"
   type = "spread"
   labels = {
     key = "proxima"
@@ -28,3 +28,18 @@ resource "hcloud_network_subnet" "proxima_subnet" {
   ip_range     = "10.0.1.0/24"
 }
 
+resource "hcloud_firewall" "default" {
+  name = "default-firewall"
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "any"
+    source_ips = [hcloud_network_subnet.proxima_subnet.ip_range]
+  }
+  rule {
+    direction = "in"
+    protocol  = "udp"
+    port      = "any"
+    source_ips = [hcloud_network_subnet.proxima_subnet.ip_range]
+  }
+}
