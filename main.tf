@@ -8,13 +8,28 @@ data "hcloud_image" "baseimage_name" {
 }
 
 #To `spread` the VMs on separate physical servers
-resource "hcloud_placement_group" "pg-1" {
-  name = "pg-1"
+resource "hcloud_placement_group" "pg_bastion" {
+  name = "pg_bastion"
   type = "spread"
   labels = {
     key = "proxima"
   }
 }
+resource "hcloud_placement_group" "pg_consul" {
+  name = "pg_consul"
+  type = "spread"
+  labels = {
+    key = "proxima"
+  }
+}
+resource "hcloud_placement_group" "pg_nomad" {
+  name = "pg_nomad"
+  type = "spread"
+  labels = {
+    key = "proxima"
+  }
+}
+
 
 resource "hcloud_network" "network" {
   name     = var.hcloud_network

@@ -5,9 +5,8 @@ package_upgrade: true
 
 # APT fails to acquire GPG keys if package dirmngr is missing
 bootcmd:
-  - [ cloud-init-per, once, dirmngr-aptupdate, apt-get, update ]
-  - [ cloud-init-per, once, dirmngr-aptinstall, apt-get, install, dirmngr, -y ]
-  - [ cloud-init-per, once, gnupg-aptinstall, apt-get, install, gnupg2, -y ]
+  - [ cloud-init-per, once, aptupdate, apt-get, update ]
+  - [ cloud-init-per, once, prereq-aptinstall, apt-get, install, curl ca-certificates lsb-release gnupg2 dirmngr, -y ]
   - [ cloud-init-per, once, common-aptinstall, apt-get, install, software-properties-common, -y ]
   - [ cloud-init-per, once, dnsmasq-aptinstall, apt-get, install, dnsmasq, -y ]
 
@@ -22,7 +21,7 @@ write_files:
         apt-get update
         curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
         apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-        apt-get update && apt-get install consul && apt-get install nomad
+        apt-get update && apt-get install consul nomad
 
     - owner: root:root
       path: /etc/consul.d/10-consul.hcl
@@ -35,13 +34,35 @@ write_files:
         log_level  = "INFO"
         connect {
             enabled = true
-        }
+            }
         rejoin_after_leave = true
         retry_join = [
             "${consul01_IP}",
             "${consul02_IP}",
             "${consul03_IP}"
-        ]
+            ]
+        
+    - owner: root:root
+      path: /etc/nomad.d/nomadserver.hcl
+      permissions: '0644'
+      content: |
+
+        datacenter = "dc1"
+        data_dir   = "/opt/nomad"
+        log_level  = "INFO"
+        server {
+          enabled = true
+          bootstrap_expect = 3
+          server_join {
+            retry_join = [
+              "${nomadserver01_IP}",
+              "${nomadserver02_IP}",
+              "${nomadserver03_IP}"
+              ]
+            retry_max = 3
+            retry_interval = "15s"
+            }
+        }
 
     - owner: root:root
       path: /etc/dnsmasq.d/10-consul
@@ -50,14 +71,14 @@ write_files:
         bind-interfaces
         listen-address=127.0.0.1 ${private_IP}
         no-hosts
-        server=/consul/127.0.0.1#8600
+        server=/.consul/127.0.0.1#8600
         resolv-file=/etc/resolv.dnsmasq
 
     - owner: root:root
       path: /etc/resolv.temp
       permissions: '0644'
       content: |
-        search consul
+        search node.consul
         nameserver 127.0.0.1
 
 
@@ -67,15 +88,7 @@ runcmd:
     - mv /etc/resolv.temp /etc/resolv.conf
     - mv /etc/consul.d/10-consul.hcl /etc/consul.d/consul.hcl
     - mkdir /var/lib/consul && chown -R consul:consul /var/lib/consul
-    - chkconfig dnsmasq on
+    - rm /etc/nomad.d/nomad.hcl
+    - chkconfig dnsmasq on && systemctl restart dnsmasq
     - systemctl restart consul
-
-
-
-
-
-
-
-
-
-
+    - systemctl restart nomad

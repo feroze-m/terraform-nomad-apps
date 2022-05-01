@@ -6,7 +6,7 @@ resource "hcloud_server" "consulserver" {
   location = var.location_name
   firewall_ids = [hcloud_firewall.consul_8500_tcp.id, hcloud_firewall.consul_8500_udp.id, hcloud_firewall.default.id]
   ssh_keys = [ "proxima-sshkey" ]
-  placement_group_id = hcloud_placement_group.pg-1.id
+  placement_group_id = hcloud_placement_group.pg_consul.id
 
   network {
     network_id = hcloud_network.network.id
