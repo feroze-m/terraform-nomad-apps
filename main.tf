@@ -1,8 +1,8 @@
-/*resource "hcloud_ssh_key" "default" {
-  name       = "Terraform"
-  public_key = file("./${var.ssh_key_name}.pub")
+# Configure the Hetzner Cloud Provider
+provider "hcloud" {
+  token = var.hcloud_token
 }
-*/
+
 data "hcloud_image" "baseimage_name" {
   name = var.baseimage_name
 }
@@ -29,7 +29,6 @@ resource "hcloud_placement_group" "pg_nomad" {
     key = "proxima"
   }
 }
-
 
 resource "hcloud_network" "network" {
   name     = var.hcloud_network
