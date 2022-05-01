@@ -1,28 +1,25 @@
 resource "hcloud_server" "bastion" {
-  name = "bastion01"
+  name = format("bastion%02d", count.index + 1)
   count = var.bastion_count
   server_type = var.bastion_server_type
   image = var.baseimage_name
   location = var.location_name
   firewall_ids = [hcloud_firewall.bastion_fw.id]
+  ssh_keys = [ "proxima-sshkey" ]
 
   network {
     network_id = hcloud_network.network.id
-    ip         = "10.0.1.201"
-    alias_ips  = [
-      "10.0.1.101"
-    ]
+    ip         = "${lookup(var.bastion_ips, count.index, "")}"
   }
   depends_on = [
     hcloud_network_subnet.proxima_subnet
   ]
-}  
-
-resource "hcloud_rdns" "bastion" {
-  count = var.bastion_count
-  server_id  = hcloud_server.bastion[count.index].id
-  ip_address = hcloud_server.bastion[count.index].ipv4_address
-  dns_ptr    = "bastion01.example.com"
+  user_data = templatefile("${path.module}/userdata/bastion.tmpl",{
+    private_IP = "${lookup(var.bastion_ips, count.index, "")}"
+    consul01_IP = "${lookup(var.consulserver_ips, 0, "")}"
+    consul02_IP = "${lookup(var.consulserver_ips, 1, "")}"
+    consul03_IP = "${lookup(var.consulserver_ips, 2, "")}"
+  })
 }
 
 resource "hcloud_firewall" "bastion_fw" {
@@ -46,4 +43,9 @@ variable "bastion_server_type" {
 variable "bastion_count" {
   type = string
   default = 0
+}
+
+variable "bastion_ips" {
+  type = map(string)
+  default = {}
 }

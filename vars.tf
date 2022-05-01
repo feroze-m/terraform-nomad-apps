@@ -30,6 +30,18 @@ variable "baseimage_name" {
   default = "debian-10"
 }
 
+variable "domain_name" {
+  type = string
+  default = "example.com"
+  description = "Public Domain Name"
+}
+
+variable "prvt_domain_name" {
+  type = string
+  default = "example1.com"
+  description = "Private Domain Name"
+}
+
 variable "lb_count" {
   type    = string
   default = 0

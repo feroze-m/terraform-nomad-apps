@@ -5,26 +5,22 @@ resource "hcloud_server" "nomadclient" {
   image = var.baseimage_name
   location = var.location_name
   firewall_ids = [hcloud_firewall.default.id]
+  ssh_keys = [ "proxima-sshkey" ]
   placement_group_id = hcloud_placement_group.pg-1.id
 
   network {
     network_id = hcloud_network.network.id
-/*    ip         = "10.0.1.211"
-    alias_ips  = [
-      "10.0.1.111"
-    ]
-    */
+    ip         = "${lookup(var.nomadclient_ips, count.index, "")}"
   }
   depends_on = [
     hcloud_network_subnet.proxima_subnet
   ]
-}  
-
-resource "hcloud_rdns" "nomadclient" {
-  count = var.nomadclient_count
-  server_id  = hcloud_server.nomadclient[count.index].id
-  ip_address = hcloud_server.nomadclient[count.index].ipv4_address
-  dns_ptr    = "${hcloud_server.nomadclient[count.index].name}.example.com"
+  user_data = templatefile("${path.module}/userdata/nomadclient.tmpl",{
+    private_IP = "${lookup(var.nomadclient_ips, count.index, "")}"
+    consul01_IP = "${lookup(var.consulserver_ips, 0, "")}"
+    consul02_IP = "${lookup(var.consulserver_ips, 1, "")}"
+    consul03_IP = "${lookup(var.consulserver_ips, 2, "")}"
+  })
 }
 
 variable "nomadclient_type" {
@@ -53,4 +49,9 @@ resource "hcloud_volume_attachment" "nomadclient" {
   volume_id = hcloud_volume.nomadclient[count.index].id
   server_id = hcloud_server.nomadclient[count.index].id
   automount = true
+}
+
+variable "nomadclient_ips" {
+  type = map(string)
+  default = {}
 }

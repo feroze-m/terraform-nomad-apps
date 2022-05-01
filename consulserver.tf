@@ -4,11 +4,13 @@ resource "hcloud_server" "consulserver" {
   server_type = var.consulserver_type
   image = var.baseimage_name
   location = var.location_name
-  firewall_ids = [hcloud_firewall.consul_fw.id, hcloud_firewall.default.id]
+  firewall_ids = [hcloud_firewall.consul_8500_tcp.id, hcloud_firewall.consul_8500_udp.id, hcloud_firewall.default.id]
+  ssh_keys = [ "proxima-sshkey" ]
   placement_group_id = hcloud_placement_group.pg-1.id
 
   network {
     network_id = hcloud_network.network.id
+    ip         = "${lookup(var.consulserver_ips, count.index, "")}"
 /*    ip         = "10.0.1.211"
     alias_ips  = [
       "10.0.1.111"
@@ -18,21 +20,32 @@ resource "hcloud_server" "consulserver" {
   depends_on = [
     hcloud_network_subnet.proxima_subnet
   ]
+  user_data = templatefile("${path.module}/userdata/consul.tmpl",{
+    private_IP = "${lookup(var.consulserver_ips, count.index, "")}"
+    consul01_IP = "${lookup(var.consulserver_ips, 0, "")}"
+    consul02_IP = "${lookup(var.consulserver_ips, 1, "")}"
+    consul03_IP = "${lookup(var.consulserver_ips, 2, "")}"
+  })
 }
 
-resource "hcloud_rdns" "consulserver" {
-  count = var.consulserver_count
-  server_id  = hcloud_server.consulserver[count.index].id
-  ip_address = hcloud_server.consulserver[count.index].ipv4_address
-  dns_ptr    = "${hcloud_server.consulserver[count.index].name}.example.com"
-}
-
-resource "hcloud_firewall" "consul_fw" {
-  name = "consul-firewall"
+resource "hcloud_firewall" "consul_8500_tcp" {
+  name = "consul-8500-tcp"
   rule {
     direction = "in"
     protocol  = "tcp"
-    port      = "8500-8502"
+    port      = "8500"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+}
+resource "hcloud_firewall" "consul_8500_udp" {
+  name = "consul-8500-udp"
+  rule {
+    direction = "in"
+    protocol  = "udp"
+    port      = "8500"
     source_ips = [
       "0.0.0.0/0",
       "::/0"
@@ -48,4 +61,9 @@ variable "consulserver_type" {
 variable "consulserver_count" {
   type = string
   default = 0
+}
+
+variable "consulserver_ips" {
+  type = map(string)
+  default = {}
 }
