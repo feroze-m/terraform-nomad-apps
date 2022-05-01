@@ -5,19 +5,22 @@ resource "hcloud_server" "nomadserver" {
   image = var.baseimage_name
   location = var.location_name
   firewall_ids = [hcloud_firewall.nomadserver_fw.id, hcloud_firewall.default.id]
+  ssh_keys = [ "proxima-sshkey" ]
   placement_group_id = hcloud_placement_group.pg-1.id
 
   network {
     network_id = hcloud_network.network.id
-/*    ip         = "10.0.1.211"
-    alias_ips  = [
-      "10.0.1.111"
-    ]
-    */
+    ip         = "${lookup(var.nomadserver_ips, count.index, "")}"
   }
   depends_on = [
     hcloud_network_subnet.proxima_subnet
   ]
+  user_data = templatefile("${path.module}/userdata/nomadserver.tmpl",{
+    private_IP = "${lookup(var.nomadserver_ips, count.index, "")}"
+    consul01_IP = "${lookup(var.consulserver_ips, 0, "")}"
+    consul02_IP = "${lookup(var.consulserver_ips, 1, "")}"
+    consul03_IP = "${lookup(var.consulserver_ips, 2, "")}"
+  })
 }  
 
 resource "hcloud_firewall" "nomadserver_fw" {
@@ -33,13 +36,6 @@ resource "hcloud_firewall" "nomadserver_fw" {
   }
 }
 
-resource "hcloud_rdns" "nomadserver" {
-  count = var.nomadserver_count
-  server_id  = hcloud_server.nomadserver[count.index].id
-  ip_address = hcloud_server.nomadserver[count.index].ipv4_address
-  dns_ptr    = "${hcloud_server.nomadserver[count.index].name}.example.com"
-}
-
 variable "nomadserver_type" {
   type  = string
   default = "cx11"
@@ -48,4 +44,9 @@ variable "nomadserver_type" {
 variable "nomadserver_count" {
   type = string
   default = 0
+}
+
+variable "nomadserver_ips" {
+  type = map(string)
+  default = {}
 }
