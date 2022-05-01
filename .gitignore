@@ -1,5 +1,5 @@
 
-*secret*
+*secrets.tfvars
 *.pem
 *tfstate*
 *.terraform

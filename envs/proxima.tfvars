@@ -2,7 +2,6 @@
 location_name = "nbg1"
 baseimage_name = "debian-10"
 domain_name = "proxima-myapp.com"
-prvt_domain_name = "proxima-myapp1.com"
 
 bastion_count = 1
 consulserver_count = 3
