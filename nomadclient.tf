@@ -6,7 +6,7 @@ resource "hcloud_server" "nomadclient" {
   location = var.location_name
   firewall_ids = [hcloud_firewall.default.id]
   ssh_keys = [ "proxima-sshkey" ]
-  placement_group_id = hcloud_placement_group.pg-1.id
+  placement_group_id = hcloud_placement_group.pg_nomad.id
 
   network {
     network_id = hcloud_network.network.id
@@ -20,6 +20,9 @@ resource "hcloud_server" "nomadclient" {
     consul01_IP = "${lookup(var.consulserver_ips, 0, "")}"
     consul02_IP = "${lookup(var.consulserver_ips, 1, "")}"
     consul03_IP = "${lookup(var.consulserver_ips, 2, "")}"
+    nomadserver01_IP = "${lookup(var.nomadserver_ips, 0, "")}"
+    nomadserver02_IP = "${lookup(var.nomadserver_ips, 1, "")}"
+    nomadserver03_IP = "${lookup(var.nomadserver_ips, 2, "")}"
   })
 }
 

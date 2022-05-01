@@ -5,9 +5,8 @@ package_upgrade: true
 
 # APT fails to acquire GPG keys if package dirmngr is missing
 bootcmd:
-  - [ cloud-init-per, once, dirmngr-aptupdate, apt-get, update ]
-  - [ cloud-init-per, once, dirmngr-aptinstall, apt-get, install, dirmngr, -y ]
-  - [ cloud-init-per, once, gnupg-aptinstall, apt-get, install, gnupg2, -y ]
+  - [ cloud-init-per, once, aptupdate, apt-get, update ]
+  - [ cloud-init-per, once, prereq-aptinstall, apt-get, install, curl ca-certificates lsb-release gnupg2 dirmngr, -y ]
   - [ cloud-init-per, once, common-aptinstall, apt-get, install, software-properties-common, -y ]
   - [ cloud-init-per, once, dnsmasq-aptinstall, apt-get, install, dnsmasq, -y ]
 
@@ -57,14 +56,14 @@ write_files:
         bind-interfaces
         listen-address=127.0.0.1 ${private_IP}
         no-hosts
-        server=/consul/127.0.0.1#8600
+        server=/.consul/127.0.0.1#8600
         resolv-file=/etc/resolv.dnsmasq
 
     - owner: root:root
       path: /etc/resolv.temp
       permissions: '0644'
       content: |
-        search consul
+        search node.consul
         nameserver 127.0.0.1
 
 
@@ -74,15 +73,5 @@ runcmd:
     - mv /etc/resolv.temp /etc/resolv.conf
     - mv /etc/consul.d/10-consul.hcl /etc/consul.d/consul.hcl
     - mkdir /var/lib/consul && chown -R consul:consul /var/lib/consul
-    - chkconfig dnsmasq on
+    - chkconfig dnsmasq on && systemctl restart dnsmasq
     - systemctl restart consul
-
-
-
-
-
-
-
-
-
-
