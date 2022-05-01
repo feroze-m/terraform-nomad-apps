@@ -32,22 +32,22 @@ write_files:
         bootstrap_expect=3
         ui_config {
             enabled = true
-        }
+            }
         datacenter = "dc1"
         data_dir   = "/var/lib/consul"
         log_level  = "INFO"
         addresses {
             http = "0.0.0.0"
-        }
+            }
         connect {
             enabled = true
-        }
+            }
         rejoin_after_leave = true
         retry_join = [
             "${consul01_IP}",
             "${consul02_IP}",
             "${consul03_IP}"
-        ]
+            ]
 
     - owner: root:root
       path: /etc/dnsmasq.d/10-consul

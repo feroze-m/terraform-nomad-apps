@@ -34,13 +34,13 @@ write_files:
         log_level  = "INFO"
         connect {
             enabled = true
-        }
+            }
         rejoin_after_leave = true
         retry_join = [
             "${consul01_IP}",
             "${consul02_IP}",
             "${consul03_IP}"
-        ]
+            ]
 
     - owner: root:root
       path: /etc/dnsmasq.d/10-consul
