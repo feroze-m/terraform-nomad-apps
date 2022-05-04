@@ -4,7 +4,7 @@ resource "hcloud_server" "nomadclient" {
   server_type = var.nomadclient_type
   image = var.baseimage_name
   location = var.location_name
-  firewall_ids = [hcloud_firewall.default.id]
+  firewall_ids = [hcloud_firewall.default.id, hcloud_firewall.traefik_fw.id]
   ssh_keys = [ "proxima-sshkey" ]
   placement_group_id = hcloud_placement_group.pg_nomad.id
 
@@ -57,4 +57,35 @@ resource "hcloud_volume_attachment" "nomadclient" {
 variable "nomadclient_ips" {
   type = map(string)
   default = {}
+}
+
+resource "hcloud_firewall" "traefik_fw" {
+  name = "traefik-fw"
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "28080"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "28081"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "28443"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
 }

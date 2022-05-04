@@ -125,6 +125,6 @@ runcmd:
     - mv /etc/consul.d/10-consul.hcl /etc/consul.d/consul.hcl
     - mkdir /var/lib/consul && chown -R consul:consul /var/lib/consul
     - rm /etc/nomad.d/nomad.hcl
-    - chkconfig dnsmasq on && systemctl restart dnsmasq
+    - systemctl restart dnsmasq
     - systemctl restart consul
     - systemctl restart nomad

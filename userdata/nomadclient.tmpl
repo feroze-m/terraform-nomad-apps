@@ -23,9 +23,8 @@ fs_setup:
   device: /dev/sdb
   partition: 1
   overwrite: true
-- cmd: mkfs -t %(filesystem)s -L %(label)s %(device)s
 mounts:
-- [ data-vol01, /opt/nomad ]
+- [ "LABEL=data-vol01", "/opt/nomad", "auto", "defaults", "0", "0" ]
 
 
 write_files:
@@ -129,9 +128,9 @@ bootcmd:
     - [ cloud-init-per, once, docker-aptremove, apt-get, remove, docker docker-engine docker.io containerd runc, -y ]
     - [ cloud-init-per, once, runscript, sh -c, /var/lib/cloud/scripts/per-once/00-initial-setup.sh ]
     - [ cloud-init-per, once, runscript, sh -c, /var/lib/cloud/scripts/per-once/10-consul_nomad-install.sh ]
-    - [ cloud-init-per, once, runscript, sh -c, /var/lib/cloud/scripts/per-once/20-docker-install.sh]
+    - [ cloud-init-per, once, runscript, sh -c, /var/lib/cloud/scripts/per-once/20-docker-install.sh ]
     - mkdir -p /opt/nomad
-    - mkfs -t ext4 -L data-vol01 /dev/sdb; mount -a
+    - [ cloud-init-per, once, datavol, mkfs -t ext4 -L data-vol01 /dev/sdb; mount -a ]
 
 runcmd:
     - mv /etc/resolv.temp /etc/resolv.conf
@@ -139,7 +138,7 @@ runcmd:
     - mv /etc/consul.d/10-consul.hcl /etc/consul.d/consul.hcl
     - mkdir /var/lib/consul && chown -R consul:consul /var/lib/consul
     - rm /etc/nomad.d/nomad.hcl
-    - chkconfig dnsmasq on && systemctl restart dnsmasq
+    - systemctl restart dnsmasq
     - systemctl restart consul
     - systemctl restart nomad
     - systemctl restart docker

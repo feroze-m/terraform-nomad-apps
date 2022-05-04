@@ -4,6 +4,7 @@ baseimage_name = "debian-10"
 domain_name = "proxima-myapp.com"
 
 bastion_count = 1
+ghrunner_count = 1
 consulserver_count = 3
 nomadserver_count = 3
 nomadclient_count = 1
@@ -25,4 +26,7 @@ nomadclient_ips = {
     }
 bastion_ips = {
     "0" = "10.0.1.99"
+    }
+ghrunner_ips = {
+    "0" = "10.0.1.91"
     }

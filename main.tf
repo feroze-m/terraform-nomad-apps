@@ -57,3 +57,4 @@ resource "hcloud_firewall" "default" {
     source_ips = [hcloud_network_subnet.proxima_subnet.ip_range]
   }
 }
+

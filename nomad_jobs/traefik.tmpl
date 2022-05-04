@@ -1,0 +1,118 @@
+job "traefik" {
+    datacenters = "dc1"
+    priority = "100"
+    constraint {
+
+    }
+    type = "system"
+    update {
+        max_parallel = 1
+        health_check = "checks"
+        min_healthy_time = "10s"
+        healthy_deadline = "3m"
+        auto_revert = false
+    }
+
+    group "traefik" {
+        restart {
+            interval = "30m"
+            attempts = 3
+            delay    = "15s"
+            mode     = "fail"
+        }
+        network {
+            port "http" {
+                static = 28080
+            }
+            port "https" {
+                static = 28443
+            }
+            port "api" {
+                static = 28081
+            }
+        }
+        service {
+            name = "traefik"
+            port = "http"
+            tags = [
+                "exporter",
+                "type=infrastructure",
+                "environment=demo",
+                "traefik.http.routers.dashboard.rule=Host(`traefik.proxima-myapp.com)",
+                "traefik.http.routers.dashboard.service=api@internal",
+                "traefik.http.routers.dashboard.entrypoints=web",
+
+                "traefik.http.routers.https.rule=Host(`traefik.proxima-myapp.com)",
+                "traefik.http.routers.https.entrypoints=websecure",
+                "traefik.http.routers.https.tls=true",
+                "traefik.http.routers.https.service=api@internal",
+
+                "traefik.http.middleware.redirect.redirectschme.scheme=https",
+                "traefik.http.middleware.redirect.redirectschme.permanent=true"
+            ]
+
+            check {
+                name = "alive"
+                type = "tcp"
+                port = "api"
+                interval = "10s"
+                timeout  = "5s"
+            }
+            check_restart {
+                limit = 3
+                grace = "90s"
+                ignore_warnings = "false"
+            }
+        }
+        task "traefik" {
+            driver = "docker"
+            config {
+                image = "traefik:v2.6"
+                network_mode = "host"
+            }
+            template {
+                change_mode = "restart"
+                data = <<EOF
+                [entryPoints]
+                    [entryPoints.web]
+                        address = ":28080"
+                [entryPoints]
+                    [entryPoints.websecure]
+                        address = ":28443"
+                        insecure = true
+                [entryPoints]
+                    [entryPoints.api]
+                        address = ":28081"
+
+                [api]
+                    dashboard = true
+                    insecure = true
+
+                [providers]
+                    [providers.file]
+                        directory = "/etc/traefik"
+                        watch = true
+
+                    [providers.consul.Catalog]
+                        prefix = "traefik"
+                        exposedByDefault = false
+                        [providers.consul.Catalog.endpoint]
+                            address = "127.0.0.1:8500"
+                            scheme  = "http"
+                [log]
+                    level = "INFO"
+                [accessLog]
+                    [accessLog.fields.headers]
+                        defaultMode = "keep"   
+                
+                EOF
+                    destination = "local/traefik.toml"
+            }
+
+            resources {
+                cpu     = 300
+                memory  = 128
+            }
+        }
+    }
+}
