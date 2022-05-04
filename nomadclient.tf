@@ -37,7 +37,7 @@ variable "nomadclient_count" {
 }
 variable "nomadclient_volume_size" {
   type = string
-  default = 10
+  default = 20
 }
 resource "hcloud_volume" "nomadclient" {
   count     = var.nomadclient_count

@@ -2,108 +2,140 @@
 
 package_update: true
 package_upgrade: true
+packages:
+  - curl
+  - ca-certificates
+  - lsb-release
+  - gnupg2
+  - dirmngr
+  - vim
+  - dnsutils
+  - software-properties-common
 
-# APT fails to acquire GPG keys if package dirmngr is missing
-bootcmd:
-  - [ cloud-init-per, once, aptupdate, apt-get, update ]
-  - [ cloud-init-per, once, prereq-aptinstall, apt-get, install, curl ca-certificates lsb-release gnupg2 dirmngr, -y ]
-  - [ cloud-init-per, once, common-aptinstall, apt-get, install, software-properties-common, -y ]
-  - [ cloud-init-per, once, dnsmasq-aptinstall, apt-get, install, dnsmasq, -y ]
-  - [ cloud-init-per, once, docker-aptremove, apt-get, remove, docker docker-engine docker.io containerd runc, -y ]
+disk_setup:
+  /dev/sdb:
+    table_type: 'gpt'
+    layout: true
+    overwrite: true
+fs_setup:
+- label: data-vol01
+  filesystem: ext4
+  device: /dev/sdb
+  partition: 1
+  overwrite: true
+- cmd: mkfs -t %(filesystem)s -L %(label)s %(device)s
+mounts:
+- [ data-vol01, /opt/nomad ]
 
 
 write_files:
-    - owner: root:root
-      path: /home/root/consul_nomad_install.sh
-      permissions: '0755'
-      content: |
-        #!/bin/bash
-        set -ex
-        
-        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-        apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-        apt-get update && apt-get install consul nomad
+- owner: root:root
+  path: /var/lib/cloud/scripts/per-once/00-initial-setup.sh
+  permissions: '0755'
+  content: |
+      #!/bin/bash
+      set -ex
+      apt-get update
+      cp -a /etc/resolv.conf /etc/resolv.orig
+      systemctl disable systemd-resolved.service && systemctl stop systemd-resolved.service
+      systemctl disable resolvconf.service && systemctl stop resolvconf.service
+      apt-get install dnsmasq -y
+      
+- owner: root:root
+  path: /var/lib/cloud/scripts/per-once/10-consul_nomad-install.sh
+  permissions: '0755'
+  content: |
+      #!/bin/bash
+      set -ex
+      apt-get update
+      curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+      apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+      apt-get update && apt-get install consul nomad -y
 
-    - owner: root:root
-      path: /home/root/docker_install.sh
-      permissions: '0755'
-      content: |
-        #!/bin/bash
-        set -ex
-        
-        curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-        echo \
-        "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
-        $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-        
-        apt-get update && apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+- owner: root:root
+  path: var/lib/cloud/scripts/per-once/20-docker-install.sh
+  permissions: '0755'
+  content: |
+      #!/bin/bash
+      set -ex
+      
+      curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+      echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
+      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      
+      apt-get update && apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
-    - owner: root:root
-      path: /etc/consul.d/10-consul.hcl
-      permissions: '0644'
-      content: |
+- owner: root:root
+  path: /etc/consul.d/10-consul.hcl
+  permissions: '0644'
+  content: |
 
-        bind_addr = "${private_IP}"
-        addresses = { 
-          http = "${private_IP}" 
-          }
-        server    = false
-        datacenter = "dc1"
-        data_dir   = "/var/lib/consul"
-        log_level  = "INFO"
-        connect {
-            enabled = true
-            }
-        rejoin_after_leave = true
-        retry_join = [
-            "${consul01_IP}",
-            "${consul02_IP}",
-            "${consul03_IP}"
-            ]
+      bind_addr = "${private_IP}"
+      server    = false
+      datacenter = "dc1"
+      data_dir   = "/var/lib/consul"
+      log_level  = "INFO"
+      connect {
+        enabled = true
+      }
+      rejoin_after_leave = true
+      retry_join = [
+        "${consul01_IP}",
+        "${consul02_IP}",
+        "${consul03_IP}"
+      ]
 
-    - owner: root:root
-      path: /etc/nomad.d/nomadclient.hcl
-      permissions: '0644'
-      content: |
-        
-        datacenter = "dc1"
-        data_dir   = "/opt/nomad"
-        log_level  = "INFO"
-        client {
-          enabled = true
-          node_class    = "proxima"
-          alloc_dir  = "/opt/nomad/alloc"
-          servers = [
-            "${nomadserver01_IP}",
-            "${nomadserver02_IP}",
-            "${nomadserver03_IP}"
-        ]
+- owner: root:root
+  path: /etc/nomad.d/nomadclient.hcl
+  permissions: '0644'
+  content: |
+
+      datacenter = "dc1"
+      data_dir   = "/opt/nomad"
+      log_level  = "INFO"
+      client {
+        enabled  = true
+        alloc_dir  = "/opt/nomad/alloc"
+        servers = [
+          "${nomadserver01_IP}",
+          "${nomadserver02_IP}",
+          "${nomadserver03_IP}"
+          ]
         }
-        plugin "docker" {}
+      plugin "docker" {}
+      consul {
+        address = "127.0.0.1:8500"
+      }
 
-    - owner: root:root
-      path: /etc/dnsmasq.d/10-consul
-      permissions: '0644'
-      content: |
-        bind-interfaces
-        listen-address=127.0.0.1 ${private_IP}
-        no-hosts
-        server=/.consul/127.0.0.1#8600
-        resolv-file=/etc/resolv.dnsmasq
+- owner: root:root
+  path: /etc/dnsmasq.d/10-consul
+  permissions: '0644'
+  content: |
+      bind-interfaces
+      listen-address=127.0.0.1,${private_IP}
+      no-hosts
+      server=/.consul/127.0.0.1#8600
+      resolv-file=/etc/resolv.conf.dnsmasq
 
-    - owner: root:root
-      path: /etc/resolv.temp
-      permissions: '0644'
-      content: |
-        search node.consul
-        nameserver 127.0.0.1
+- owner: root:root
+  path: /etc/resolv.temp
+  permissions: '0644'
+  content: |
+      search node.consul
+      nameserver 127.0.0.1
 
+bootcmd: 
+    - [ cloud-init-per, once, docker-aptremove, apt-get, remove, docker docker-engine docker.io containerd runc, -y ]
+    - [ cloud-init-per, once, runscript, sh -c, /var/lib/cloud/scripts/per-once/00-initial-setup.sh ]
+    - [ cloud-init-per, once, runscript, sh -c, /var/lib/cloud/scripts/per-once/10-consul_nomad-install.sh ]
+    - [ cloud-init-per, once, runscript, sh -c, /var/lib/cloud/scripts/per-once/20-docker-install.sh]
+    - mkdir -p /opt/nomad
+    - mkfs -t ext4 -L data-vol01 /dev/sdb; mount -a
 
 runcmd:
-    - sh -c /home/root/consul_nomad_install.sh
-    - sh -c /home/root/docker_install.sh
-    - cp -a /etc/resolv.conf /etc/resolv.dnsmasq
     - mv /etc/resolv.temp /etc/resolv.conf
+    - cp -a /etc/resolv.orig /etc/resolv.conf.dnsmasq
     - mv /etc/consul.d/10-consul.hcl /etc/consul.d/consul.hcl
     - mkdir /var/lib/consul && chown -R consul:consul /var/lib/consul
     - rm /etc/nomad.d/nomad.hcl
@@ -111,4 +143,3 @@ runcmd:
     - systemctl restart consul
     - systemctl restart nomad
     - systemctl restart docker
-
