@@ -13,11 +13,6 @@ resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
-/*
-resource "hcloud_ssh_key" "default_public_key" {
-  name       = var.ssh_key_name
-  public_key = tls_private_key.ssh_key.public_key_openssh #file("~/.ssh/id_rsa.pub")
-*/
 
 resource "local_file" "private_key" {
   content         = tls_private_key.ssh_key.private_key_pem
@@ -29,13 +24,3 @@ resource "local_file" "public_key" {
   filename        = "${var.ssh_key_name}.pub"
   file_permission = "0600"
 }
-/*
-  provisioner "local-exec" {
-    command = <<-EOC
-    echo ${tls_private_key.ssh_key.private_key_pem} >> ./${var.ssh_key_name}.pem
-    chmod 400 ./${var.ssh_key_name}.pem
-    echo ${tls_private_key.ssh_key.public_key_openssh} >> ./${var.ssh_key_name}.pub
-    EOC
-  }
-}
-*/

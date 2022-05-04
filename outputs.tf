@@ -1,6 +1,9 @@
 output "bastion_ips" {
     value = hcloud_server.bastion[*].ipv4_address
 }
+output "ghrunner_ips" {
+    value = hcloud_server.ghrunner[*].ipv4_address
+}
 output "consulserver_ips" {
     value = hcloud_server.consulserver[*].ipv4_address
 }
