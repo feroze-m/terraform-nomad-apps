@@ -16,7 +16,7 @@ on:
 #        required: false
 
 jobs:
-  initialize:
+  terraform-code:
     runs-on: self-hosted
     defaults:
       run:
