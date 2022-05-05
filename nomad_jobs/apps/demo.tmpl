@@ -62,6 +62,10 @@ job "demo" {
                 image = "hashicorp/http-echo"
                 args  = ["-text", "hello world"]
             }
+            resources {
+                cpu     = 20
+                memory  = 100
+            }
         }
     }
 }
