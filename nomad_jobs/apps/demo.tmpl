@@ -25,10 +25,11 @@ job "demo" {
             mode     = "fail"
         }
         network {
-            port "http" {
-                to = 8080
+            port  "http" {
+            to = -1
             }
         }
+
         service {
             name = "demo"
             port = "http"
@@ -38,12 +39,13 @@ job "demo" {
                 "name=demo",
                 "traefik.enable=true",
                 "traefik.http.routers.demo.entrypoints=web,websecure",
+                "traefik.http.routers.http.rule=Path(`/myapp`)",
             ]
-
+            
             check {
                 name = "alive"
-                type = "tcp"
-                port = "http"
+                type = "http"
+                path = "/"
                 interval = "10s"
                 timeout  = "5s"
             }
@@ -53,15 +55,17 @@ job "demo" {
                 ignore_warnings = "false"
             }
         }
-        task "demo" {
+        
+        task "server" {
+            env {
+                PORT    = "${NOMAD_PORT_http}"
+                NODE_IP = "${NOMAD_IP_http}"
+            }
+        
             driver = "docker"
             config {
-                image = "hello-world:latest"
-                ports = [ "http" ]
-            }
-            resources {
-                cpu     = 100
-                memory  = 100
+                image = "hashicorp/demo-webapp-lb-guide"
+                ports = ["http"]
             }
         }
     }
