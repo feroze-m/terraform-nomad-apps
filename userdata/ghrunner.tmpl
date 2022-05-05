@@ -48,7 +48,8 @@ write_files:
       apt-get update
       curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
       apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-      apt-get update && apt-get install consul -y
+      apt-get update && apt-get install terraform=1.1.9
+      apt-get install consul -y
 
 - owner: root:root
   path: /var/lib/cloud/scripts/user/20-ghrunner-setup.sh
@@ -74,10 +75,11 @@ write_files:
       
       #Launch runner
       ./config.sh --url https://github.com/feroze-m/terraform-hetzner --token AYTPLU4BNUYCGHPHUXFQOJ3COLTAI
-      ./svc.sh install
-      ./svc.sh start
       
       EOF
+      
+      ./svc.sh install
+      ./svc.sh start
 
 - owner: root:root
   path: /etc/consul.d/10-consul.hcl
