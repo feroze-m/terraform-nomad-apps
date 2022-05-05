@@ -6,7 +6,6 @@ resource "hcloud_server" "ghrunner" {
   location = var.location_name
   firewall_ids = [ hcloud_firewall.default.id ]
   ssh_keys = [ "proxima-sshkey" ]
-  
 
   network {
     network_id = hcloud_network.network.id

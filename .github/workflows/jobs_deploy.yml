@@ -3,6 +3,8 @@
 
 name: deploy_nomad_jobs
 on:
+  pull_request:
+    types: [opened, reopened]
   push:
     branches:
       - main
@@ -16,7 +18,7 @@ on:
 #        required: false
 
 jobs:
-  initialize:
+  terraform-code:
     runs-on: self-hosted
     defaults:
       run:
