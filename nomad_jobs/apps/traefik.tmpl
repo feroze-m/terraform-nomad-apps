@@ -28,15 +28,15 @@ job "traefik" {
             }
             port "api" {
                 static = 28081
-                to = 28081
             }
         }
         service {
             name = "traefik"
             port = "web"
             tags = [
-                "type=system",
+                "type =system",
                 "environment=demo",
+                "name=traefik",
 
 #                "traefik.http.routers.dashboard.rule=Host(`traefik.proxima-myapp.com)",
 #                "traefik.http.routers.dashboard.service=api@internal",
@@ -82,7 +82,7 @@ job "traefik" {
                         address = ":28080"
                     [entryPoints.websecure]
                         address = ":28443"
-                    [entryPoints.api]
+                    [entryPoints.traefik]
                         address = ":28081"
 
                 [web]
@@ -101,7 +101,7 @@ job "traefik" {
                         exposedByDefault = false
                         [providers.consulCatalog.endpoint]
                         address = "127.0.0.1:8500"
-                            scheme  = "http"
+                        scheme  = "http"
                 
                 [log]
                     level = "INFO"
