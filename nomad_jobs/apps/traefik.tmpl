@@ -96,10 +96,10 @@ job "traefik" {
                         directory = "/etc/traefik"
                         watch = true
 
-                    [providers.consul.Catalog]
+                    [providers.consulCatalog]
                         prefix = "traefik"
                         exposedByDefault = false
-                        [providers.consul.Catalog.endpoint]
+                        [providers.consulCatalog.endpoint]
                         address = "127.0.0.1:8500"
                             scheme  = "http"
                 
