@@ -37,6 +37,7 @@ job "traefik" {
             tags = [
                 "type=system",
                 "environment=demo",
+
 #                "traefik.http.routers.dashboard.rule=Host(`traefik.proxima-myapp.com)",
 #                "traefik.http.routers.dashboard.service=api@internal",
 #                "traefik.http.routers.dashboard.entrypoints=web",
@@ -46,8 +47,8 @@ job "traefik" {
 #                "traefik.http.routers.https.tls=true",
 #                "traefik.http.routers.https.service=api@internal",
 
-#               "traefik.http.middleware.redirect.redirectschme.scheme=https",
-#               "traefik.http.middleware.redirect.redirectschme.permanent=true"
+#               "traefik.http.middleware.redirect.redirectscheme.scheme=https",
+#               "traefik.http.middleware.redirect.redirectscheme.permanent=true"
             ]
 
             check {
