@@ -73,50 +73,51 @@ job "traefik" {
                   "local/traefik.toml:/etc/traefik/traefik.toml"
                 ]
             }
-        }
 
-        template {
-            change_mode = "restart"
-            data = <<EOF
-            [entryPoints]
-                [entryPoints.web]
-                    address = ":28080"
-            [entryPoints]
-                [entryPoints.websecure]
-                    address = ":28443"
+            template {
+                change_mode = "restart"
+                data = <<EOF
+                [entryPoints]
+                    [entryPoints.web]
+                        address = ":28080"
+                [entryPoints]
+                    [entryPoints.websecure]
+                        address = ":28443"
                     insecure = true
-            [entryPoints]
-                [entryPoints.api]
-                    address = ":28081"
+                [entryPoints]
+                    [entryPoints.api]
+                        address = ":28081"
 
-            [api]
-                dashboard = true
-                insecure = true
+                [api]
+                    dashboard = true
+                    insecure = true
 
-            [providers]
-                [providers.file]
-                    directory = "/etc/traefik"
-                    watch = true
+                [providers]
+                    [providers.file]
+                        directory = "/etc/traefik"
+                        watch = true
 
-                [providers.consul.Catalog]
-                    prefix = "traefik"
-                    exposedByDefault = false
-                    [providers.consul.Catalog.endpoint]
+                    [providers.consul.Catalog]
+                        prefix = "traefik"
+                        exposedByDefault = false
+                        [providers.consul.Catalog.endpoint]
                         address = "127.0.0.1:8500"
-                        scheme  = "http"
-            [log]
-                level = "INFO"
-            [accessLog]
-                [accessLog.fields.headers]
-                    defaultMode = "keep"
+                            scheme  = "http"
                 
-            EOF
-                destination = "local/traefik.toml"
-        }
+                [log]
+                    level = "INFO"
+                [accessLog]
+                    [accessLog.fields.headers]
+                        defaultMode = "keep"
+                
+                EOF
+                    destination = "local/traefik.toml"
+            }
 
-        resources {
-            cpu     = 300
-            memory  = 128
+            resources {
+                cpu     = 300
+                memory  = 128
+            }
         }
     }
 }
