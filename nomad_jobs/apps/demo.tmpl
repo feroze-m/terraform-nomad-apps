@@ -56,16 +56,11 @@ job "demo" {
             }
         }
         
-        task "server" {
-            env {
-                PORT    = "${NOMAD_PORT_http}"
-                NODE_IP = "${NOMAD_IP_http}"
-            }
-        
+        task "server" {        
             driver = "docker"
             config {
-                image = "hashicorp/demo-webapp-lb-guide"
-                ports = ["http"]
+                image = "hashicorp/http-echo"
+                args  = ["-text", "hello world"]
             }
         }
     }
