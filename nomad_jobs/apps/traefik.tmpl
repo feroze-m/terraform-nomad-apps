@@ -1,9 +1,6 @@
 job "traefik" {
     datacenters = "dc1"
     priority = "100"
-    constraint {
-
-    }
     type = "system"
     update {
         max_parallel = 1
@@ -23,19 +20,22 @@ job "traefik" {
         network {
             port "http" {
                 static = 28080
+                to = 28080
             }
             port "https" {
                 static = 28443
+                to = 28443
             }
             port "api" {
                 static = 28081
+                to = 28081
             }
         }
         service {
             name = "traefik"
             port = "http"
             tags = [
-                "type=infrastructure",
+                "type=system",
                 "environment=demo",
 #                "traefik.http.routers.dashboard.rule=Host(`traefik.proxima-myapp.com)",
 #                "traefik.http.routers.dashboard.service=api@internal",
@@ -68,50 +68,54 @@ job "traefik" {
             config {
                 image = "traefik:v2.6"
                 network_mode = "host"
+                volumes = [
+                  "local/traefik.toml:/etc/traefik/traefik.toml"
+                ]
             }
-            template {
-                change_mode = "restart"
-                data = <<EOF
-                [entryPoints]
-                    [entryPoints.web]
-                        address = ":28080"
-                [entryPoints]
-                    [entryPoints.websecure]
-                        address = ":28443"
-                        insecure = true
-                [entryPoints]
-                    [entryPoints.api]
-                        address = ":28081"
+        }
 
-                [api]
-                    dashboard = true
+        template {
+            change_mode = "restart"
+            data = <<EOF
+            [entryPoints]
+                [entryPoints.web]
+                    address = ":28080"
+            [entryPoints]
+                [entryPoints.websecure]
+                    address = ":28443"
                     insecure = true
+            [entryPoints]
+                [entryPoints.api]
+                    address = ":28081"
 
-                [providers]
-                    [providers.file]
-                        directory = "/etc/traefik"
-                        watch = true
+            [api]
+                dashboard = true
+                insecure = true
 
-                    [providers.consul.Catalog]
-                        prefix = "traefik"
-                        exposedByDefault = false
-                        [providers.consul.Catalog.endpoint]
-                            address = "127.0.0.1:8500"
-                            scheme  = "http"
-                [log]
-                    level = "INFO"
-                [accessLog]
-                    [accessLog.fields.headers]
-                        defaultMode = "keep"   
+            [providers]
+                [providers.file]
+                    directory = "/etc/traefik"
+                    watch = true
+
+                [providers.consul.Catalog]
+                    prefix = "traefik"
+                    exposedByDefault = false
+                    [providers.consul.Catalog.endpoint]
+                        address = "127.0.0.1:8500"
+                        scheme  = "http"
+            [log]
+                level = "INFO"
+            [accessLog]
+                [accessLog.fields.headers]
+                    defaultMode = "keep"
                 
-                EOF
-                    destination = "local/traefik.toml"
-            }
+            EOF
+                destination = "local/traefik.toml"
+        }
 
-            resources {
-                cpu     = 300
-                memory  = 128
-            }
+        resources {
+            cpu     = 300
+            memory  = 128
         }
     }
 }
