@@ -18,11 +18,11 @@ job "traefik" {
             mode     = "fail"
         }
         network {
-            port "http" {
+            port "web" {
                 static = 28080
                 to = 28080
             }
-            port "https" {
+            port "websecure" {
                 static = 28443
                 to = 28443
             }
@@ -33,7 +33,7 @@ job "traefik" {
         }
         service {
             name = "traefik"
-            port = "http"
+            port = "web"
             tags = [
                 "type=system",
                 "environment=demo",
@@ -80,14 +80,13 @@ job "traefik" {
                 [entryPoints]
                     [entryPoints.web]
                         address = ":28080"
-                [entryPoints]
                     [entryPoints.websecure]
                         address = ":28443"
-                    insecure = true
-                [entryPoints]
                     [entryPoints.api]
                         address = ":28081"
 
+                [web]
+                    insecure = true
                 [api]
                     dashboard = true
                     insecure = true
