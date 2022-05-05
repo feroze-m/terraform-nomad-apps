@@ -18,11 +18,13 @@ job "traefik" {
             mode     = "fail"
         }
         network {
-            port "http" {
+            port "web" {
                 static = 28080
+                to = 28080
             }
-            port "https" {
+            port "websecure" {
                 static = 28443
+                to = 28443
             }
             port "api" {
                 static = 28081
@@ -30,22 +32,23 @@ job "traefik" {
         }
         service {
             name = "traefik"
-            port = "http"
+            port = "web"
             tags = [
-                "exporter",
-                "type=infrastructure",
+                "type =system",
                 "environment=demo",
-                "traefik.http.routers.dashboard.rule=Host(`traefik.proxima-myapp.com)",
-                "traefik.http.routers.dashboard.service=api@internal",
-                "traefik.http.routers.dashboard.entrypoints=api",
+                "name=traefik",
+
+#                "traefik.http.routers.dashboard.rule=Host(`traefik.proxima-myapp.com)",
+#                "traefik.http.routers.dashboard.service=api@internal",
+#                "traefik.http.routers.dashboard.entrypoints=api",
 
 #                "traefik.http.routers.https.rule=Host(`traefik.proxima-myapp.com)",
 #                "traefik.http.routers.https.entrypoints=websecure",
 #                "traefik.http.routers.https.tls=true",
 #                "traefik.http.routers.https.service=api@internal",
 
-#                "traefik.http.middleware.redirect.redirectschme.scheme=https",
-#                "traefik.http.middleware.redirect.redirectschme.permanent=true"
+#                "traefik.http.middleware.redirect.redirectscheme.scheme=https",
+#                "traefik.http.middleware.redirect.redirectscheme.permanent=true"
             ]
 
             check {
@@ -66,21 +69,24 @@ job "traefik" {
             config {
                 image = "traefik:v2.6"
                 network_mode = "host"
+                volumes = [
+                  "local/traefik.toml:/etc/traefik/traefik.toml"
+                ]
             }
+
             template {
                 change_mode = "restart"
                 data = <<EOF
                 [entryPoints]
                     [entryPoints.web]
                         address = ":28080"
-                [entryPoints]
                     [entryPoints.websecure]
                         address = ":28443"
-                        insecure = true
-                [entryPoints]
-                    [entryPoints.api]
+                    [entryPoints.traefik]
                         address = ":28081"
 
+                [web]
+                    insecure = true
                 [api]
                     dashboard = true
                     insecure = true
@@ -90,17 +96,18 @@ job "traefik" {
                         directory = "/etc/traefik"
                         watch = true
 
-                    [providers.consul.Catalog]
+                    [providers.consulCatalog]
                         prefix = "traefik"
                         exposedByDefault = false
-                        [providers.consul.Catalog.endpoint]
-                            address = "127.0.0.1:8500"
-                            scheme  = "http"
+                        [providers.consulCatalog.endpoint]
+                        address = "127.0.0.1:8500"
+                        scheme  = "http"
+                
                 [log]
                     level = "INFO"
                 [accessLog]
                     [accessLog.fields.headers]
-                        defaultMode = "keep"   
+                        defaultMode = "keep"
                 
                 EOF
                     destination = "local/traefik.toml"
