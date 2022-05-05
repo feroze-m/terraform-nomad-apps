@@ -37,15 +37,15 @@ job "traefik" {
                 "environment=demo",
                 "traefik.http.routers.dashboard.rule=Host(`traefik.proxima-myapp.com)",
                 "traefik.http.routers.dashboard.service=api@internal",
-                "traefik.http.routers.dashboard.entrypoints=web",
+                "traefik.http.routers.dashboard.entrypoints=api",
 
-                "traefik.http.routers.https.rule=Host(`traefik.proxima-myapp.com)",
-                "traefik.http.routers.https.entrypoints=websecure",
-                "traefik.http.routers.https.tls=true",
-                "traefik.http.routers.https.service=api@internal",
+#                "traefik.http.routers.https.rule=Host(`traefik.proxima-myapp.com)",
+#                "traefik.http.routers.https.entrypoints=websecure",
+#                "traefik.http.routers.https.tls=true",
+#                "traefik.http.routers.https.service=api@internal",
 
-                "traefik.http.middleware.redirect.redirectschme.scheme=https",
-                "traefik.http.middleware.redirect.redirectschme.permanent=true"
+#                "traefik.http.middleware.redirect.redirectschme.scheme=https",
+#                "traefik.http.middleware.redirect.redirectschme.permanent=true"
             ]
 
             check {
