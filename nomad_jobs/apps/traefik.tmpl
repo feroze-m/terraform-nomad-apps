@@ -71,6 +71,7 @@ job "traefik" {
                 network_mode = "host"
                 volumes = [
                   "local/traefik.toml:/etc/traefik/traefik.toml"
+                  "local/nomad-ui.toml:/etc/traefik/nomad-ui.toml"
                 ]
             }
 
@@ -111,6 +112,27 @@ job "traefik" {
                 
                 EOF
                     destination = "local/traefik.toml"
+            }
+            
+            template {
+                data = <<EOF
+                [http]
+                    [http.routers]
+                        [http.routers.nomad]
+                            entryPoints = ["web", "websecure"]
+                            rule = "Path(`/nomad`)"
+                            service = "nomad"
+                            [http.routers.nomad.tls]
+                    [http.services]
+                        [http.services.nomad.loadBalancer]
+                            [["[[http.services.nomad.loadBalancer.servers]]"]]
+                                url = "http://10.0.1.21:4646/"
+                            [["[[http.services.nomad.loadBalancer.servers]]"]]
+                                url = "http://10.0.1.22:4646/"
+                            [["[[http.services.nomad.loadBalancer.servers]]"]]
+                                url = "http://10.0.1.23:4646/"
+                EOF
+                    destination = "local/nomad-ui.toml"
             }
 
             resources {
