@@ -70,7 +70,7 @@ job "traefik" {
                 image = "traefik:v2.6"
                 network_mode = "host"
                 volumes = [
-                  "local/traefik.toml:/etc/traefik/traefik.toml"
+                  "local/traefik.toml:/etc/traefik/traefik.toml",
                   "local/nomad-ui.toml:/etc/traefik/nomad-ui.toml"
                 ]
             }
