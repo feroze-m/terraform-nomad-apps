@@ -124,11 +124,11 @@ job "traefik" {
                             service = "nomad-ui"
                     [http.services]
                         [http.services.nomad-ui.loadBalancer]
-                            [["[[http.services.nomad-ui.loadBalancer.servers]]"]]
+                            [[http.services.nomad-ui.loadBalancer.servers]]
                                 url = "http://10.0.1.21:4646/ui"
-                            [["[[http.services.nomad-ui.loadBalancer.servers]]"]]
+                            [[http.services.nomad-ui.loadBalancer.servers]]
                                 url = "http://10.0.1.22:4646/ui"
-                            [["[[http.services.nomad-ui.loadBalancer.servers]]"]]
+                            [[http.services.nomad-ui.loadBalancer.servers]]
                                 url = "http://10.0.1.23:4646/ui"
                 EOF
                     destination = "local/nomad-ui.toml"
