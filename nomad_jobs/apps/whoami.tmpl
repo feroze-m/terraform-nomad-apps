@@ -38,6 +38,7 @@ job "whoami" {
                 "name=whoami",
                 "traefik.enable=true",
                 "traefik.http.routers.whoami.entrypoints=web,websecure",
+                "traefik.http.routers.demo-app.rule=Path(`/whoami`)",
             ]
 
             check {
