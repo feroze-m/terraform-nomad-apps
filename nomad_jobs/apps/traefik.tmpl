@@ -119,8 +119,7 @@ job "traefik" {
                 [http]
                     [http.routers]
                         [http.routers.nomad-ui]
-                            entryPoints = ["web"]
-                            rule = "Path(`/nomadui`)"
+                            rule = "PathPrefix(`/nomadui`)"
                             service = "nomad-ui"
                     [http.services]
                         [http.services.nomad-ui.loadBalancer]
