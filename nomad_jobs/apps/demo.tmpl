@@ -1,4 +1,4 @@
-job "demo" {
+job "demo-app" {
     datacenters = "dc1"
     priority = "50"
     type = "service"
@@ -16,7 +16,7 @@ job "demo" {
         healthy_deadline = "5m"
     }
 
-    group "demo" {
+    group "demo-app" {
         count = 1
         restart {
             interval = "30m"
@@ -31,15 +31,15 @@ job "demo" {
         }
 
         service {
-            name = "demo"
+            name = "demo-app"
             port = "http"
             tags = [
                 "type=service",
                 "environment=demo",
-                "name=demo",
+                "name=demo-app",
                 "traefik.enable=true",
-                "traefik.http.routers.demo.entrypoints=web,websecure",
-                "traefik.http.routers.http.rule=Path(`/myapp`)",
+                "traefik.http.routers.demo-app.entrypoints=web,websecure",
+                "traefik.http.routers.demo-app.rule=Path(`/myapp`)",
             ]
             
             check {
