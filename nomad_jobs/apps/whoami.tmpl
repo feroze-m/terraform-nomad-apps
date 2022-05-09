@@ -38,7 +38,7 @@ job "whoami" {
                 "name=whoami",
                 "traefik.enable=true",
                 "traefik.http.routers.whoami.entrypoints=web,websecure",
-                "traefik.http.routers.whoami.rule=Host(`157.90.225.198`) && PathPrefix(`/whoami`)",
+                "traefik.http.routers.whoami.rule=Host(`whoami.service.consul`) && PathPrefix(`/`)",
             ]
 
             check {
