@@ -119,14 +119,14 @@ job "traefik" {
                 [http]
                     [http.routers]
                         [http.routers.nomad-ui]
-                            rule = "PathPrefix(`/nomadui`)"
+                            rule = "Host(`nomad.service.consul`) && PathPrefix(`/`)"
                             service = "nomad-ui"
                     [http.services]
                         [http.services.nomad-ui.loadBalancer]
                             [[http.services.nomad-ui.loadBalancer.servers]]
                                 url = "http://nomadserver01.node.consul:4646/"
                             [[http.services.nomad-ui.loadBalancer.servers]]
-                                url = "http://nomadserver02:4646/"
+                                url = "http://nomadserver02.node.consul:4646/"
                             [[http.services.nomad-ui.loadBalancer.servers]]
                                 url = "http://10.0.1.23:4646/"
                 EOF
