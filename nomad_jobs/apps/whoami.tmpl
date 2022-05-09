@@ -27,6 +27,7 @@ job "whoami" {
         network {
             port "http" {
                 to = -1
+                host_network = "private"
             }
         }
         service {
