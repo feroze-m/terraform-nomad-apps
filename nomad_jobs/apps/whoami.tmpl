@@ -60,8 +60,11 @@ job "whoami" {
             driver = "docker"
             config {
                 image = "traefik/whoami:latest"
-                network_mode = "host"
                 ports = [ "http" ]
+            }
+            env {
+                PORT    = "${NOMAD_PORT_http}"
+                NODE_IP = "${NOMAD_IP_http}"
             }
             resources {
                 cpu     = 100
