@@ -29,6 +29,7 @@ job "traefik" {
             port "api" {
                 static = 28081
             }
+            host_network = "private"
         }
         service {
             name = "traefik"
