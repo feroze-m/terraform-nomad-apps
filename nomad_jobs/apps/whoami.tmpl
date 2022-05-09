@@ -60,7 +60,7 @@ job "whoami" {
             driver = "docker"
             config {
                 image = "traefik/whoami:latest"
-                network_mode = "bridge"
+                network_mode = "host"
                 ports = [ "http" ]
             }
             resources {
