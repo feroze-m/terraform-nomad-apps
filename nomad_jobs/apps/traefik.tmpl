@@ -37,10 +37,9 @@ job "traefik" {
                 "type =system",
                 "environment=demo",
                 "name=traefik",
-
-#                "traefik.http.routers.dashboard.rule=Host(`traefik.proxima-myapp.com)",
-#                "traefik.http.routers.dashboard.service=api@internal",
-#                "traefik.http.routers.dashboard.entrypoints=api",
+                "traefik.http.routers.dashboard.rule=Host(`traefik.service.consul`)",
+                "traefik.http.routers.dashboard.service=api@internal",
+                "traefik.http.routers.dashboard.entrypoints=api",
 
 #                "traefik.http.routers.https.rule=Host(`traefik.proxima-myapp.com)",
 #                "traefik.http.routers.https.entrypoints=websecure",
