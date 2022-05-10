@@ -2,7 +2,7 @@ locals {}
 
 resource "nomad_job" "all_jobs" {
     for_each = fileset(path.module, "apps/*")
-    jobspec = templatefile("${path.module}/${each.value}/${each.value}.tmpl", {
+    jobspec = templatefile("${path.module}/${each.value}/service.tmpl", {
         traefik_cpu = var.traefik_cpu
         traefik_mem = var.traefik_mem
     })
