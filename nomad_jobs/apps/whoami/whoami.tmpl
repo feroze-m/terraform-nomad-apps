@@ -1,4 +1,10 @@
-job "whoami" {
+[[- /* Template values as defaults json */ -]]
+[[- $Defaults := (fileContents "values.json" | parseJSON ) -]]
+
+[[- /* Load variables over the defaults. */ -]]
+[[- $Values := mergeOverwrite $Defaults . -]]
+
+job "[[ $Values.service.job_name ]]" {
     datacenters = "dc1"
     priority = "50"
     type = "service"
@@ -16,7 +22,7 @@ job "whoami" {
         healthy_deadline = "5m"
     }
 
-    group "whoami" {
+    group "[[ $Values.service.group_name ]]" {
         count = 1
         restart {
             interval = "30m"
@@ -31,7 +37,7 @@ job "whoami" {
             }
         }
         service {
-            name = "whoami"
+            name = "[[ $Values.service.service.name ]]"
             port = "http"
             tags = [
                 "type=service",
@@ -57,12 +63,15 @@ job "whoami" {
                 ignore_warnings = "false"
             }
         }
-        task "whoami" {
+        task "[[ $Values.service.task_name ]]" {
             driver = "docker"
             config {
-                image = "traefik/whoami:latest"
+                image = "[[ $Values.service.image ]]"
                 ports = [ "http" ]
             }
+	    env {
+		HOST="[[ $Values.service.host ]]"
+	    }
             resources {
                 cpu     = 100
                 memory  = 100
