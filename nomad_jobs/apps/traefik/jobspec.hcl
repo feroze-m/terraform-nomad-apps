@@ -1,10 +1,4 @@
-[[- /* Some defaults/vars in values.json */ -]]
-[[- $Defaults := (fileContents "values.json" | parseJSON ) -]]
-
-[[- /* Load variables over defaults. */ -]]
-[[- $Values := mergeOverwrite $Defaults . -]]
-
-job "[[ $Values.service.job_name ]]" {
+job "traefik" {
     datacenters = "dc1"
     priority = "100"
     type = "system"
@@ -16,7 +10,7 @@ job "[[ $Values.service.job_name ]]" {
         auto_revert = false
     }
 
-    group "[[ $Values.service.group_name ]]" {
+    group "traefik" {
         restart {
             interval = "30m"
             attempts = 3
@@ -40,12 +34,12 @@ job "[[ $Values.service.job_name ]]" {
             }
         }
         service {
-            name = "[[ $Values.service.service.name ]]"
+            name = "traefik"
             port = "web"
             tags = [
                 "type=system",
                 "environment=demo",
-                "name=[[ $Values.service.service.name ]]",
+                "name=traefik",
                 "traefik.http.routers.dashboard.rule=Host(`traefik.service.consul`)",
                 "traefik.http.routers.dashboard.service=api@internal",
                 "traefik.http.routers.dashboard.entrypoints=api",
@@ -72,10 +66,10 @@ job "[[ $Values.service.job_name ]]" {
                 ignore_warnings = "false"
             }
         }
-        task "[[ $Values.service.task_name ]]" {
+        task "traefik" {
             driver = "docker"
             config {
-                image = "[[ $Values.service.image ]]"
+                image = "traefik:v2.6"
                 network_mode = "host"
                 volumes = [
                   "local/traefik.toml:/etc/traefik/traefik.toml",
