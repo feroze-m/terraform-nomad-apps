@@ -38,7 +38,7 @@ job "whoami" {
                 "environment=demo",
                 "name=whoami",
                 "traefik.enable=true",
-                "traefik.http.routers.whoami.rule=Host(`whoami.service.consul`)",
+                "traefik.http.routers.whoami.rule=Host(`whoami.service.consul`) && PathPrefix('/')",
                 "traefik.http.routers.whoami.entrypoints=web",
                 "traefik.http.routers.whoami.middlewares=strip-whoami",
                 "traefik.http.middlewares.strip-whoami.stripprefix.prefixes=/",
@@ -65,6 +65,7 @@ job "whoami" {
             }
 	    env {
 		HOST="0.0.0.0"
+		PORT="${NOMAD_PORT_http}"
 	    }
             resources {
                 cpu     = 100
