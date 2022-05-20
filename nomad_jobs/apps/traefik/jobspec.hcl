@@ -20,10 +20,12 @@ job "traefik" {
         network {
             port "web" {
                 static = 28080
+                to = 28080
                 host_network = "private"
             }
             port "websecure" {
                 static = 28443
+                to = 28443
                 host_network = "private"
             }
             port "api" {
@@ -33,13 +35,14 @@ job "traefik" {
         }
         service {
             name = "traefik"
+	    port = "web"
             tags = [
                 "type=system",
                 "environment=demo",
                 "name=traefik",
-                "traefik.http.routers.dashboard.rule=Host(`traefik.service.consul`)",
-                "traefik.http.routers.dashboard.service=api@internal",
-                "traefik.http.routers.dashboard.entrypoints=api",
+#                "traefik.http.routers.dashboard.rule=Host(`traefik.service.consul`)",
+#                "traefik.http.routers.dashboard.service=api@internal",
+#                "traefik.http.routers.dashboard.entrypoints=api",
 
 #                "traefik.http.routers.https.rule=Host(`traefik.proxima-myapp.com)",
 #                "traefik.http.routers.https.entrypoints=websecure",
@@ -82,7 +85,7 @@ job "traefik" {
                         address = ":28080"
                     [entryPoints.websecure]
                         address = ":28443"
-                    [entryPoints.api]
+                    [entryPoints.traefik]
                         address = ":28081"
 
                 [web]
