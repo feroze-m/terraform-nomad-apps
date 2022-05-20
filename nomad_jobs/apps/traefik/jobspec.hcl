@@ -43,7 +43,7 @@ job "traefik" {
 		"traefik.enable=true",
 		"traefik.http.routers.dashboard.rule=Host(`traefik.dashboard.consul`)",
 		"traefik.http.routers.dashboard.service=api@internal",
-		"traefik.http.routers.dashboard.entrypoints=api",
+		"traefik.http.routers.dashboard.entrypoints=traefik",
 		"traefik.http.routers.dashboard.middlewares=dashboard-auth",
 		"traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$apr1$D584SsOc$wKDXKKgcdb5NEq7HxZH1r/",
 
