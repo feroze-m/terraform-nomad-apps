@@ -19,17 +19,13 @@ job "traefik" {
         }
         network {
             port "web" {
-                static = 28080
-                to = 28080
+                static = 80
+                to = 80
                 host_network = "private"
             }
             port "websecure" {
-                static = 28443
-                to = 28443
-                host_network = "private"
-            }
-            port "api" {
-                static = 28081
+                static = 443
+                to = 443
                 host_network = "private"
             }
         }
@@ -43,7 +39,7 @@ job "traefik" {
 		"traefik.enable=true",
 		"traefik.http.routers.dashboard.rule=Host(`traefik.dashboard.consul`)",
 		"traefik.http.routers.dashboard.service=api@internal",
-		"traefik.http.routers.dashboard.entrypoints=traefik",
+		"traefik.http.routers.dashboard.entrypoints=web",
 		"traefik.http.routers.dashboard.middlewares=dashboard-auth",
 		"traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$apr1$D584SsOc$wKDXKKgcdb5NEq7HxZH1r/",
 
@@ -85,11 +81,9 @@ job "traefik" {
                 data = <<EOF
                 [entryPoints]
                     [entryPoints.web]
-                        address = ":28080"
+                        address = ":80"
                     [entryPoints.websecure]
-                        address = ":28443"
-                    [entryPoints.traefik]
-                        address = ":28081"
+                        address = ":443"
 
                 [web]
                     insecure = true
