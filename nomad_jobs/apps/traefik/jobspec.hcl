@@ -19,13 +19,18 @@ job "traefik" {
         }
         network {
             port "web" {
-                static = 80
-                to = 80
+                static = 28080
+                to = 28080
                 host_network = "private"
             }
             port "websecure" {
-                static = 443
-                to = 443
+                static = 28443
+                to = 28443
+                host_network = "private"
+            }
+            port "api" {
+                static = 28081
+                to = 28081
                 host_network = "private"
             }
         }
@@ -37,11 +42,12 @@ job "traefik" {
                 "environment=demo",
                 "name=traefik",
 		"traefik.enable=true",
-		"traefik.http.routers.dashboard.rule=Host(`traefik.dashboard.consul`)",
+		"traefik.http.routers.dashboard.rule=(PathPrefix(`/api`) || PathPrefix(`/dashboard`))",
 		"traefik.http.routers.dashboard.service=api@internal",
-		"traefik.http.routers.dashboard.entrypoints=web",
+		"traefik.http.routers.dashboard.entrypoints=traefik",
 		"traefik.http.routers.dashboard.middlewares=dashboard-auth",
-		"traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$apr1$D584SsOc$wKDXKKgcdb5NEq7HxZH1r/",
+		"traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$2y$12$GjWq1wSZGPOAKEVjDNGDLeu.jMlzg0b6KjFIPICKP0iCeUHqscAbG",
+		"traefik.http.middlewares.dashboard-auth.basicauth.removeHeader=true",
 
 #                "traefik.http.routers.https.rule=Host(`traefik.proxima-myapp.com)",
 #                "traefik.http.routers.https.entrypoints=websecure",
@@ -55,7 +61,7 @@ job "traefik" {
             check {
                 name = "alive"
                 type = "tcp"
-                port = "web"
+                port = "api"
                 interval = "10s"
                 timeout  = "5s"
             }
@@ -81,16 +87,17 @@ job "traefik" {
                 data = <<EOF
                 [entryPoints]
                     [entryPoints.web]
-                        address = ":80"
+                        address = ":28080"
                     [entryPoints.websecure]
-                        address = ":443"
+                        address = ":28443"
+                    [entryPoints.traefik]
+                        address = ":28081"
 
                 [web]
                     insecure = true
 
                 [api]
                     dashboard = true
-                    insecure = true
 
                 [providers]
                     [providers.file]
@@ -123,10 +130,10 @@ job "traefik" {
                 [http]
                     [http.routers]
                         [http.routers.nomad-ui]
-                            rule = "Host(`nomad.dashboard.consul`) && PathPrefix(`/`)"
-                            service = "nomad-ui"
+                            rule = "PathPrefix(`/nomad`)"
+                            service = "nomad-ui@consulcatalog"
 			    entrypoints = ["web"]
-			    middlewares = ["dashboard-auth"]
+			    middlewares = ["dashboard-auth@consulcatalog"]
                     [http.services]
                         [http.services.nomad-ui.loadBalancer]
                             [[http.services.nomad-ui.loadBalancer.servers]]
