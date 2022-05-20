@@ -19,15 +19,15 @@ job "traefik" {
         }
         network {
             port "web" {
-                static = 8080
+                static = 28080
                 host_network = "private"
             }
             port "websecure" {
-                static = 8443
+                static = 28443
                 host_network = "private"
             }
             port "api" {
-                static = 8081
+                static = 28081
                 host_network = "private"
             }
         }
@@ -79,11 +79,11 @@ job "traefik" {
                 data = <<EOF
                 [entryPoints]
                     [entryPoints.web]
-                        address = ":8080"
+                        address = ":28080"
                     [entryPoints.websecure]
-                        address = ":8443"
+                        address = ":28443"
                     [entryPoints.api]
-                        address = ":8081"
+                        address = ":28081"
 
                 [web]
                     insecure = true
