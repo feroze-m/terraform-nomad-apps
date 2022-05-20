@@ -19,23 +19,20 @@ job "traefik" {
         }
         network {
             port "web" {
-                static = 28080
-                to = 28080
+                static = 8080
                 host_network = "private"
             }
             port "websecure" {
-                static = 28443
-                to = 28443
+                static = 8443
                 host_network = "private"
             }
             port "api" {
-                static = 28081
+                static = 8081
                 host_network = "private"
             }
         }
         service {
             name = "traefik"
-            port = "web"
             tags = [
                 "type=system",
                 "environment=demo",
@@ -82,11 +79,11 @@ job "traefik" {
                 data = <<EOF
                 [entryPoints]
                     [entryPoints.web]
-                        address = ":28080"
+                        address = ":8080"
                     [entryPoints.websecure]
-                        address = ":28443"
-                    [entryPoints.traefik]
-                        address = ":28081"
+                        address = ":8443"
+                    [entryPoints.api]
+                        address = ":8081"
 
                 [web]
                     insecure = true
@@ -105,6 +102,10 @@ job "traefik" {
                         [providers.consulCatalog.endpoint]
                         address = "127.0.0.1:8500"
                         scheme  = "http"
+
+		    [providers.consul]
+			rootKey = "traefik"
+			endpoints = ["127.0.0.1:8500"]
                 
                 [log]
                     level = "INFO"
