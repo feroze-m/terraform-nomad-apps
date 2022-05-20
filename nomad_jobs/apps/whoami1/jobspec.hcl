@@ -39,9 +39,9 @@ job "whoami" {
                 "name=whoami",
                 "traefik.enable=true",
                 "traefik.http.routers.whoami.rule=Host(`whoami.service.consul`)",
-                "traefik.http.routers.whoami.entrypoints=web,websecure",
-#                "traefik.http.routers.whoami.middlewares=strip-whoami",
-#                "traefik.http.middlewares.strip-whoami.stripprefix.prefixes=/",
+                "traefik.http.routers.whoami.entrypoints=web",
+                "traefik.http.routers.whoami.middlewares=strip-whoami",
+                "traefik.http.middlewares.strip-whoami.stripprefix.prefixes=/",
             ]
 
             check {

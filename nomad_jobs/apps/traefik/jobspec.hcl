@@ -19,12 +19,12 @@ job "traefik" {
         }
         network {
             port "web" {
-                static = 80
+                static = 28080
                 to = 28080
                 host_network = "private"
             }
             port "websecure" {
-                static = 443
+                static = 28443
                 to = 28443
                 host_network = "private"
             }
