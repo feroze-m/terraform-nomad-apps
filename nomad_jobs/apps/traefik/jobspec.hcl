@@ -55,7 +55,7 @@ job "traefik" {
             check {
                 name = "alive"
                 type = "tcp"
-                port = "api"
+                port = "web"
                 interval = "10s"
                 timeout  = "5s"
             }
