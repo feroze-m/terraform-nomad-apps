@@ -88,6 +88,9 @@ job "traefik" {
                 [web]
                     insecure = true
 
+                [api]
+                    dashboard = true
+
                 [providers]
                     [providers.file]
                         directory = "/etc/traefik"
@@ -119,8 +122,10 @@ job "traefik" {
                 [http]
                     [http.routers]
                         [http.routers.nomad-ui]
-                            rule = "Host(`nomad.service.consul`) && PathPrefix(`/`)"
+                            rule = "Host(`nomad.dashboard.consul`) && PathPrefix(`/`)"
                             service = "nomad-ui"
+			    entrypoints = ["web"]
+			    middlewares = ["dashboard-auth"]
                     [http.services]
                         [http.services.nomad-ui.loadBalancer]
                             [[http.services.nomad-ui.loadBalancer.servers]]
