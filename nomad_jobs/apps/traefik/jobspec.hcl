@@ -87,9 +87,7 @@ job "traefik" {
 
                 [web]
                     insecure = true
-                [api]
                     dashboard = true
-                    insecure = true
 
                 [providers]
                     [providers.file]
