@@ -38,7 +38,7 @@ job "whoami" {
                 "environment=demo",
                 "name=whoami",
                 "traefik.enable=true",
-                "traefik.http.routers.whoami.rule=Path('/health')",
+                "traefik.http.routers.whoami.rule=Path(`/health`)",
                 "traefik.http.routers.whoami.entrypoints=web",
 #                "traefik.http.routers.whoami.middlewares=strip-whoami",
 #                "traefik.http.middlewares.strip-whoami.stripprefix.prefixes=/",
