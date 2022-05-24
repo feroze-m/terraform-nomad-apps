@@ -1,4 +1,4 @@
-job "proxima" {
+job "alpha" {
     datacenters = "dc1"
     priority = "50"
     type = "service"
@@ -16,7 +16,7 @@ job "proxima" {
         healthy_deadline = "5m"
     }
 
-    group "proxima" {
+    group "alpha" {
         count = 1
         restart {
             interval = "30m"
@@ -31,17 +31,17 @@ job "proxima" {
             }
         }
         service {
-            name = "proxima"
+            name = "alpha"
             port = "http"
             tags = [
                 "type=service",
                 "environment=demo",
-                "name=proxima",
+                "name=alpha",
                 "traefik.enable=true",
-                "traefik.http.routers.proxima.rule=Host(`proxima.service.consul`) && PathPrefix(`/alpha`)",
-                "traefik.http.routers.proxima.entrypoints=web,websecure",
-                "traefik.http.routers.proxima.middlewares=strip-proxima",
-                "traefik.http.middlewares.strip-proxima.stripprefix.prefixes=/",
+                "traefik.http.routers.alpha.rule=Host(`proxima.service.consul`) && PathPrefix(`/alpha`)",
+                "traefik.http.routers.alpha.entrypoints=web,websecure",
+                "traefik.http.routers.alpha.middlewares=strip-alpha",
+                "traefik.http.middlewares.strip-alpha.stripprefix.prefixes=/",
             ]
 
             check {
@@ -57,7 +57,7 @@ job "proxima" {
                 ignore_warnings = "false"
             }
         }
-        task "proxima" {
+        task "alpha" {
             driver = "docker"
             config {
                 image = "jwilder/whoami"

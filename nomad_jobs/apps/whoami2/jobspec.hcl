@@ -38,7 +38,7 @@ job "docs" {
                 "environment=demo",
                 "name=docs",
                 "traefik.enable=true",
-                "traefik.http.routers.docs.rule=Host(`docs.service.consul`) && PathPrefix(`/docs`)",
+                "traefik.http.routers.docs.rule=HostRegexp(`{subdomain:[a-z]+}.service.consul`) && PathPrefix(`/docs`)",
                 "traefik.http.routers.docs.entrypoints=web,websecure",
                 "traefik.http.routers.docs.middlewares=strip-docs",
                 "traefik.http.middlewares.strip-docs.stripprefix.prefixes=/",
