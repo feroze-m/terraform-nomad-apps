@@ -10,7 +10,7 @@ Terraform code to deploy resources in hertzner cloud
 6. Configures nomad servers (3 VMs)
 7. Configures nomad clients (`N` clients)
 
-# How: (Add details as we go)
+# How:
 1. Clone this repo to your local machine
 2. Log into the Hetzner account. Generate an api token with name terraform-<project-name>
     - Rename the `secrets_tmpl.tfvars` to `envs/$project-secrets.tfvars`
