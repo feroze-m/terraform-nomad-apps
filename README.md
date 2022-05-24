@@ -2,22 +2,23 @@
 Terraform code to deploy resources in hertzner cloud
 
 # What it does
-1. Deploys VMs for bastion, consul, nomad cluster with terraform
+1. Deploys VMs for bastion, gh-runner, consul, nomad cluster with terraform
 2. Stores the tfstate in s3 or terraform cloud
 3. Bastion/Jump host for ssh access. We can add other binaries like nomad (or terraform) if needed for live env troubleshooting.
-4. Configures consul servers (3 VMs)
-5. Configures nomad servers (3 VMs)
-6. Configures nomad clients (`N` clients)
+4. Github Runner for deploying nomad jobs
+5. Configures consul servers (3 VMs)
+6. Configures nomad servers (3 VMs)
+7. Configures nomad clients (`N` clients)
 
 # How: (Add details as we go)
 1. Clone this repo to your local machine
 2. Log into the Hetzner account. Generate an api token with name terraform-<project-name>
-    - Rename the `secrets_tmpl.tfvars` to `secrets.tfvars`
-    - Update the token locally in `secrets.tfvars` (will try to make this work at run time using s3 url or terraform cloud)
-3. Run terraform init, plan and apply
+    - Rename the `secrets_tmpl.tfvars` to `envs/$project-secrets.tfvars`
+    - Update the token locally in `$project-secrets.tfvars` (will try to make this work at run time using s3 url or terraform cloud)
+3. Run terraform init, plan and apply (e.g for proxima below)
     - `terraform init`
-    - `terraform plan --var-file=envs/proxima.tfvars --var-file=envs/secrets.tfvars`
-    - `terraform apply --var-file=envs/proxima.tfvars --var-file=envs/secrets.tfvars`
+    - `terraform plan --var-file=envs/proxima.tfvars --var-file=envs/proxima-secrets.tfvars`
+    - `terraform apply --var-file=envs/proxima.tfvars --var-file=envs/proxima-secrets.tfvars`
 4. Terraform output will give the IP addresses of each VM
 5. Consul service web UI is accessible at `http://<consulserver_IP>:8500`
 6. Nomad service web UI is accessible at `http://<nomadserver_IP>:4646`
@@ -37,11 +38,10 @@ Terraform code to deploy resources in hertzner cloud
 	- Run terraform commands
 5. In the userdata section, ideally you wouldn't need to edit any values, except for 
 	- Github runner token, which is going to be specific to the repo for nomad jobs
-	- If consulserver/nomadserver count is increased to more than 3 (ideally not needed), 
+	- If consulserver/nomadserver count is increased to more than 3 (again not really needed), 
 		- Update all the files in `userdata/$servertype.tmpl`, to include the reference to new servers.
 
-
-x. `Improvements:`
+X. `Improvements:`
     - `Apply domain names using hcloud_rdns`
     - `Add ssl certs for https`
     - `Possible addition later: Atlantis webhook to deploy these with github PRs. Needs an atlantis host with internet/public access.`
