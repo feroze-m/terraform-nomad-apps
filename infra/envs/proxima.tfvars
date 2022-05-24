@@ -2,6 +2,7 @@
 location_name = "nbg1"
 baseimage_name = "debian-10"
 domain_name = "proxima-myapp.com"
+ssh_key_name = proxima-sshkey
 
 bastion_count = 1
 ghrunner_count = 1
