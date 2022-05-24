@@ -15,13 +15,15 @@ Terraform code to deploy resources in hertzner cloud
 2. Log into the Hetzner account. Generate an api token with name terraform-<project-name>
     - Rename the `secrets_tmpl.tfvars` to `envs/$project-secrets.tfvars`
     - Update the token locally in `$project-secrets.tfvars` (will try to make this work at run time using s3 url or terraform cloud)
-3. Run terraform init, plan and apply (e.g for proxima below)
+3. Create an ssh-keypair and copy the .pem and .prub files to the root dir -- `infra/`
+4. Update the var `ssh-key-name` in `envs/proxima.tfvars` to specify your filename without extension
+5. Run terraform init, plan and apply (e.g for proxima below)
     - `terraform init`
     - `terraform plan --var-file=envs/proxima.tfvars --var-file=envs/proxima-secrets.tfvars`
     - `terraform apply --var-file=envs/proxima.tfvars --var-file=envs/proxima-secrets.tfvars`
-4. Terraform output will give the IP addresses of each VM
-5. Consul service web UI is accessible at `http://<consulserver_IP>:8500`
-6. Nomad service web UI is accessible at `http://<nomadserver_IP>:4646`
+6. Terraform output will give the IP addresses of each VM
+7. Consul service web UI is accessible at `http://<consulserver_IP>:8500`
+8. Nomad service web UI is accessible at `http://<nomadserver_IP>:4646`
 
 # Important:
 1. Defaults will deploy 0 servers, so make sure to have the count updated.
