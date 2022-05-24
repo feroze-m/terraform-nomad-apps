@@ -22,7 +22,26 @@ Terraform code to deploy resources in hertzner cloud
 5. Consul service web UI is accessible at `http://<consulserver_IP>:8500`
 6. Nomad service web UI is accessible at `http://<nomadserver_IP>:4646`
 
-7. `Improvements:`
+#Important:
+1. Defaults will deploy 0 servers, so make sure to have the count updated.
+	- 0 Bastion VM
+	- 0 Github runner
+	- 0 Consul Servers
+	- 0 Nomad Servers
+	- 0 Nomad Client
+2. If you wish to increase the count of any of the servers, edit the envs/proxima.tfvars accordingly. 
+3. Datacenter and image may also be changed as needed.
+4. To deploy this infrastructure for an entirely new project - say `sirius`
+	- Create `envs/sirius.tfvars` and `envs/sirius-secrets.tfvars` similar to proxima.tfvars
+	- Provide the count and IP addresses of servers to be created
+	- Run terraform commands
+5. In the userdata section, ideally you wouldn't need to edit any values, except for 
+	- Github runner token, which is going to be specific to the repo for nomad jobs
+	- If consulserver/nomadserver count is increased to more than 3 (ideally not needed), 
+		- Update all the files in `userdata/$servertype.tmpl`, to include the reference to new servers.
+
+
+x. `Improvements:`
     - `Apply domain names using hcloud_rdns`
     - `Add ssl certs for https`
     - `Possible addition later: Atlantis webhook to deploy these with github PRs. Needs an atlantis host with internet/public access.`
