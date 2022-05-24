@@ -38,10 +38,10 @@ job "docs" {
                 "environment=demo",
                 "name=docs",
                 "traefik.enable=true",
-                "traefik.http.routers.docs.rule=Host(`docs.service.consul`)",
+                "traefik.http.routers.docs.rule=Host(`docs.service.consul`) && PathPrefix(`/`)",
                 "traefik.http.routers.docs.entrypoints=web,websecure",
-#                "traefik.http.routers.docs.middlewares=strip-docs",
-#                "traefik.http.middlewares.strip-docs.stripprefix.prefixes=/",
+                "traefik.http.routers.docs.middlewares=strip-docs",
+                "traefik.http.middlewares.strip-docs.stripprefix.prefixes=/",
             ]
 
             check {
@@ -60,7 +60,7 @@ job "docs" {
         task "docs" {
             driver = "docker"
             config {
-                image = "traefik/whoami:latest"
+                image = "jwilder/whoami:latest"
                 ports = [ "http" ]
             }
 	    env {

@@ -40,8 +40,8 @@ job "proxima" {
                 "traefik.enable=true",
                 "traefik.http.routers.proxima.rule=Host(`proxima.service.consul`)",
                 "traefik.http.routers.proxima.entrypoints=web,websecure",
-#                "traefik.http.routers.proxima.middlewares=strip-proxima",
-#                "traefik.http.middlewares.strip-proxima.stripprefix.prefixes=/",
+                "traefik.http.routers.proxima.middlewares=strip-proxima",
+                "traefik.http.middlewares.strip-proxima.stripprefix.prefixes=/",
             ]
 
             check {
@@ -60,7 +60,7 @@ job "proxima" {
         task "proxima" {
             driver = "docker"
             config {
-                image = "traefik/whoami:latest"
+                image = "jwilder/whoami:latest"
                 ports = [ "http" ]
             }
 	    env {

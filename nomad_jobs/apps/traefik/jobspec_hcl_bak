@@ -30,7 +30,6 @@ job "traefik" {
             }
             port "api" {
                 static = 28081
-                to = 28081
                 host_network = "private"
             }
         }
@@ -42,12 +41,11 @@ job "traefik" {
                 "environment=demo",
                 "name=traefik",
 		"traefik.enable=true",
-		"traefik.http.routers.dashboard.rule=(PathPrefix(`/api`) || PathPrefix(`/dashboard`))",
+		"traefik.http.routers.dashboard.rule=Host(`traefik.dashboard.consul`)",
 		"traefik.http.routers.dashboard.service=api@internal",
 		"traefik.http.routers.dashboard.entrypoints=traefik",
 		"traefik.http.routers.dashboard.middlewares=dashboard-auth",
-		"traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$2a$04$KAcClbyEYxtF6s1UeEG1HOLLZTUVTfu4W0PPQ1rftX3CG.Oh0.pf2",
-		"traefik.http.middlewares.dashboard-auth.basicauth.removeHeader=true",
+		"traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$apr1$D584SsOc$wKDXKKgcdb5NEq7HxZH1r/",
 
 #                "traefik.http.routers.https.rule=Host(`traefik.proxima-myapp.com)",
 #                "traefik.http.routers.https.entrypoints=websecure",
@@ -95,9 +93,9 @@ job "traefik" {
 
                 [web]
                     insecure = true
-
                 [api]
                     dashboard = true
+                    insecure = true
 
                 [providers]
                     [providers.file]
@@ -130,10 +128,8 @@ job "traefik" {
                 [http]
                     [http.routers]
                         [http.routers.nomad-ui]
-                            rule = "PathPrefix(`/nomad`)"
-                            service = "nomad-ui@consulcatalog"
-			    entrypoints = ["web"]
-			    middlewares = ["dashboard-auth@consulcatalog"]
+                            rule = "Host(`nomad.service.consul`) && PathPrefix(`/`)"
+                            service = "nomad-ui"
                     [http.services]
                         [http.services.nomad-ui.loadBalancer]
                             [[http.services.nomad-ui.loadBalancer.servers]]

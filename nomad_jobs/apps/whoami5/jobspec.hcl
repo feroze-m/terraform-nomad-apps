@@ -38,10 +38,10 @@ job "alpha" {
                 "environment=demo",
                 "name=alpha",
                 "traefik.enable=true",
-                "traefik.http.routers.alpha.rule=Host(`alpha.service.consul`)",
+                "traefik.http.routers.alpha.rule=Host(`alpha.service.consul`) && PathPrefix(`/alpha`)",
                 "traefik.http.routers.alpha.entrypoints=web,websecure",
-#                "traefik.http.routers.alpha.middlewares=strip-alpha",
-#                "traefik.http.middlewares.strip-alpha.stripprefix.prefixes=/alpha",
+                "traefik.http.routers.alpha.middlewares=strip-alpha",
+                "traefik.http.middlewares.strip-alpha.stripprefix.prefixes=/alpha",
             ]
 
             check {
@@ -60,7 +60,7 @@ job "alpha" {
         task "alpha" {
             driver = "docker"
             config {
-                image = "traefik/whoami:latest"
+                image = "jwilder/whoami:latest"
                 ports = [ "http" ]
             }
 	    env {

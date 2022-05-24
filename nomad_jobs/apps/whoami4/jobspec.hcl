@@ -40,8 +40,8 @@ job "qux" {
                 "traefik.enable=true",
                 "traefik.http.routers.qux.rule=Host(`qux.service.consul`)",
                 "traefik.http.routers.qux.entrypoints=web,websecure",
-#                "traefik.http.routers.qux.middlewares=strip-qux",
-#                "traefik.http.middlewares.strip-qux.stripprefix.prefixes=/",
+                "traefik.http.routers.qux.middlewares=strip-qux",
+                "traefik.http.middlewares.strip-qux.stripprefix.prefixes=/",
             ]
 
             check {
@@ -60,7 +60,7 @@ job "qux" {
         task "qux" {
             driver = "docker"
             config {
-                image = "traefik/whoami:latest"
+                image = "jwilder/whoami:latest"
                 ports = [ "http" ]
             }
 	    env {
