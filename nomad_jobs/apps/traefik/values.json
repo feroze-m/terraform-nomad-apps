@@ -1,0 +1,17 @@
+{
+  "service": {
+    "consul_address": "127.0.0.1:8500",
+    "group_name": "traefik",
+    "image": "traefik:v2.6",
+    "job_name": "traefik",
+    "resources": {
+      "cpu": 300,
+      "memory": 128
+    },
+    "service": {
+      "name": "traefik"
+    },
+    "task_name": "traefik",
+    "type": "system"
+  }
+}

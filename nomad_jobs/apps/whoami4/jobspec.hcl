@@ -1,4 +1,4 @@
-job "demo-app" {
+job "beta" {
     datacenters = "dc1"
     priority = "50"
     type = "service"
@@ -16,7 +16,7 @@ job "demo-app" {
         healthy_deadline = "5m"
     }
 
-    group "demo-app" {
+    group "beta" {
         count = 1
         restart {
             interval = "30m"
@@ -25,27 +25,29 @@ job "demo-app" {
             mode     = "fail"
         }
         network {
-            port  "http" {
-            to = -1
+            port "http" {
+                to = -1
+		host_network = "private"
             }
         }
-
         service {
-            name = "demo-app"
+            name = "beta"
             port = "http"
             tags = [
                 "type=service",
                 "environment=demo",
-                "name=demo-app",
+                "name=beta",
                 "traefik.enable=true",
-                "traefik.http.routers.demo-app.entrypoints=web,websecure",
-                "traefik.http.routers.demo-app.rule=Path(`/myapp`)",
+                "traefik.http.routers.beta.rule=Host(`proxima.service.consul`) && PathPrefix(`/beta`)",
+                "traefik.http.routers.beta.entrypoints=web,websecure",
+                "traefik.http.routers.beta.middlewares=strip-beta",
+                "traefik.http.middlewares.strip-beta.stripprefix.prefixes=/",
             ]
-            
+
             check {
                 name = "alive"
-                type = "http"
-                path = "/"
+                type = "tcp"
+                port = "http"
                 interval = "10s"
                 timeout  = "5s"
             }
@@ -55,15 +57,18 @@ job "demo-app" {
                 ignore_warnings = "false"
             }
         }
-        
-        task "server" {        
+        task "beta" {
             driver = "docker"
             config {
-                image = "hashicorp/http-echo"
-                args  = ["-text", "hello world"]
+                image = "jwilder/whoami"
+                ports = ["http"]
             }
+	    env {
+		HOST="0.0.0.0"
+		PORT="${NOMAD_PORT_http}"
+	    }
             resources {
-                cpu     = 20
+                cpu     = 100
                 memory  = 100
             }
         }

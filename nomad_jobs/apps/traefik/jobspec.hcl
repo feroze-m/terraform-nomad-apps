@@ -21,26 +21,33 @@ job "traefik" {
             port "web" {
                 static = 28080
                 to = 28080
+                host_network = "private"
             }
             port "websecure" {
                 static = 28443
                 to = 28443
+                host_network = "private"
             }
             port "api" {
                 static = 28081
+                to = 28081
+                host_network = "private"
             }
         }
         service {
             name = "traefik"
-            port = "web"
+	    port = "web"
             tags = [
-                "type =system",
+                "type=system",
                 "environment=demo",
                 "name=traefik",
-
-#                "traefik.http.routers.dashboard.rule=Host(`traefik.proxima-myapp.com)",
-#                "traefik.http.routers.dashboard.service=api@internal",
-#                "traefik.http.routers.dashboard.entrypoints=api",
+		"traefik.enable=true",
+		"traefik.http.routers.dashboard.rule=(PathPrefix(`/api`) || PathPrefix(`/dashboard`))",
+		"traefik.http.routers.dashboard.service=api@internal",
+		"traefik.http.routers.dashboard.entrypoints=traefik",
+		"traefik.http.routers.dashboard.middlewares=dashboard-auth",
+		"traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$2a$04$KAcClbyEYxtF6s1UeEG1HOLLZTUVTfu4W0PPQ1rftX3CG.Oh0.pf2",
+		"traefik.http.middlewares.dashboard-auth.basicauth.removeHeader=true",
 
 #                "traefik.http.routers.https.rule=Host(`traefik.proxima-myapp.com)",
 #                "traefik.http.routers.https.entrypoints=websecure",
@@ -88,9 +95,9 @@ job "traefik" {
 
                 [web]
                     insecure = true
+
                 [api]
                     dashboard = true
-                    insecure = true
 
                 [providers]
                     [providers.file]
@@ -103,6 +110,10 @@ job "traefik" {
                         [providers.consulCatalog.endpoint]
                         address = "127.0.0.1:8500"
                         scheme  = "http"
+
+		    [providers.consul]
+			rootKey = "traefik"
+			endpoints = ["127.0.0.1:8500"]
                 
                 [log]
                     level = "INFO"
@@ -119,14 +130,16 @@ job "traefik" {
                 [http]
                     [http.routers]
                         [http.routers.nomad-ui]
-                            rule = "PathPrefix(`/nomadui`)"
-                            service = "nomad-ui"
+                            rule = "PathPrefix(`/nomad`)"
+                            service = "nomad-ui@consulcatalog"
+			    entrypoints = ["web"]
+			    middlewares = ["dashboard-auth@consulcatalog"]
                     [http.services]
                         [http.services.nomad-ui.loadBalancer]
                             [[http.services.nomad-ui.loadBalancer.servers]]
                                 url = "http://nomadserver01.node.consul:4646/"
                             [[http.services.nomad-ui.loadBalancer.servers]]
-                                url = "http://nomadserver02:4646/"
+                                url = "http://nomadserver02.node.consul:4646/"
                             [[http.services.nomad-ui.loadBalancer.servers]]
                                 url = "http://10.0.1.23:4646/"
                 EOF

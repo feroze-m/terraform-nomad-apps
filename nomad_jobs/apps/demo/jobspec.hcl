@@ -1,4 +1,4 @@
-job "whoami" {
+job "demo-app" {
     datacenters = "dc1"
     priority = "50"
     type = "service"
@@ -16,7 +16,7 @@ job "whoami" {
         healthy_deadline = "5m"
     }
 
-    group "whoami" {
+    group "demo-app" {
         count = 1
         restart {
             interval = "30m"
@@ -25,26 +25,30 @@ job "whoami" {
             mode     = "fail"
         }
         network {
-            port "http" {
-                to = 2001
+            port  "http" {
+            to = -1
             }
         }
+
         service {
-            name = "whoami"
+            name = "demo-app"
             port = "http"
             tags = [
                 "type=service",
                 "environment=demo",
-                "name=whoami",
+                "name=demo-app",
                 "traefik.enable=true",
-                "traefik.http.routers.whoami.entrypoints=web,websecure",
-                "traefik.http.routers.whoami.rule=Host(`157.90.225.198`) && PathPrefix(`/whoami`)",
+                "traefik.http.routers.demo-app.entrypoints=web,websecure",
+                "traefik.http.routers.demo-app.entrypoints=web",
+                "traefik.http.routers.demo-app.middlewares=strip-demo-app",
+                "traefik.http.middlewares.strip-demo-app.stripprefix.prefixes=/",
+                "traefik.http.routers.demo-app.rule=Host(`demo-app.service.consul`) && PathPrefix(`/`)",
             ]
-
+            
             check {
                 name = "alive"
-                type = "tcp"
-                port = "http"
+                type = "http"
+                path = "/"
                 interval = "10s"
                 timeout  = "5s"
             }
@@ -54,14 +58,15 @@ job "whoami" {
                 ignore_warnings = "false"
             }
         }
-        task "whoami" {
+        
+        task "server" {        
             driver = "docker"
             config {
-                image = "traefik/whoami"
-                ports = [ "http" ]
+                image = "hashicorp/http-echo"
+                args  = ["-text", "hello world"]
             }
             resources {
-                cpu     = 100
+                cpu     = 20
                 memory  = 100
             }
         }
