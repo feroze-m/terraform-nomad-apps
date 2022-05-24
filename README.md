@@ -23,7 +23,7 @@ Terraform code to deploy resources in hertzner cloud
 5. Consul service web UI is accessible at `http://<consulserver_IP>:8500`
 6. Nomad service web UI is accessible at `http://<nomadserver_IP>:4646`
 
-#Important:
+# Important:
 1. Defaults will deploy 0 servers, so make sure to have the count updated.
 	- 0 Bastion VM
 	- 0 Github runner
