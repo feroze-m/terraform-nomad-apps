@@ -56,10 +56,10 @@ X. `Improvements:`
 * Repo: https://github.com/hetznercloud/cli
 * export HCLOUD_TOKEN=xxxxtokenxxxx and cli is ready to use
 
-`ferozem@Ferozes-MacBook-Air terraform-hetzner % hcloud datacenter list`
-`ID   NAME        DESCRIPTION          LOCATION`
-`2    nbg1-dc3    Nuremberg 1 DC 3     nbg1`
-`3    hel1-dc2    Helsinki 1 DC 2      hel1`
-`4    fsn1-dc14   Falkenstein 1 DC14   fsn1`
-`5    ash-dc1     Ashburn DC1          ash`
+`ferozem@Ferozes-MacBook-Air terraform-hetzner % hcloud datacenter list`  
+`ID   NAME        DESCRIPTION          LOCATION`  
+`2    nbg1-dc3    Nuremberg 1 DC 3     nbg1`  
+`3    hel1-dc2    Helsinki 1 DC 2      hel1`  
+`4    fsn1-dc14   Falkenstein 1 DC14   fsn1`  
+`5    ash-dc1     Ashburn DC1          ash`  
 
