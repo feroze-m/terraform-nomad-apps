@@ -27,7 +27,7 @@ job "docs" {
         network {
             port "http" {
                 to = -1
-                host_network = "private"
+		host_network = "private"
             }
         }
         service {
@@ -38,7 +38,7 @@ job "docs" {
                 "environment=demo",
                 "name=docs",
                 "traefik.enable=true",
-                "traefik.http.routers.docs.rule=Host(`docs.service.consul`) && PathPrefix(`/`)",
+                "traefik.http.routers.docs.rule=Host(`docs.service.consul`) && PathPrefix(`/docs`)",
                 "traefik.http.routers.docs.entrypoints=web,websecure",
                 "traefik.http.routers.docs.middlewares=strip-docs",
                 "traefik.http.middlewares.strip-docs.stripprefix.prefixes=/",
@@ -60,11 +60,12 @@ job "docs" {
         task "docs" {
             driver = "docker"
             config {
-                image = "jwilder/whoami:latest"
-                ports = [ "http" ]
+                image = "jwilder/whoami"
+                ports = ["http"]
             }
 	    env {
 		HOST="0.0.0.0"
+		PORT="${NOMAD_PORT_http}"
 	    }
             resources {
                 cpu     = 100

@@ -1,4 +1,4 @@
-job "alpha" {
+job "proxima" {
     datacenters = "dc1"
     priority = "50"
     type = "service"
@@ -16,7 +16,7 @@ job "alpha" {
         healthy_deadline = "5m"
     }
 
-    group "alpha" {
+    group "proxima" {
         count = 1
         restart {
             interval = "30m"
@@ -27,21 +27,21 @@ job "alpha" {
         network {
             port "http" {
                 to = -1
-                host_network = "private"
+		host_network = "private"
             }
         }
         service {
-            name = "alpha"
+            name = "proxima"
             port = "http"
             tags = [
                 "type=service",
                 "environment=demo",
-                "name=alpha",
+                "name=proxima",
                 "traefik.enable=true",
-                "traefik.http.routers.alpha.rule=Host(`alpha.service.consul`) && PathPrefix(`/alpha`)",
-                "traefik.http.routers.alpha.entrypoints=web,websecure",
-                "traefik.http.routers.alpha.middlewares=strip-alpha",
-                "traefik.http.middlewares.strip-alpha.stripprefix.prefixes=/alpha",
+                "traefik.http.routers.proxima.rule=Host(`proxima.service.consul`) && PathPrefix(`/`)",
+                "traefik.http.routers.proxima.entrypoints=web,websecure",
+                "traefik.http.routers.proxima.middlewares=strip-proxima",
+                "traefik.http.middlewares.strip-proxima.stripprefix.prefixes=/",
             ]
 
             check {
@@ -57,14 +57,15 @@ job "alpha" {
                 ignore_warnings = "false"
             }
         }
-        task "alpha" {
+        task "proxima" {
             driver = "docker"
             config {
-                image = "jwilder/whoami:latest"
-                ports = [ "http" ]
+                image = "jwilder/whoami"
+                ports = ["http"]
             }
 	    env {
 		HOST="0.0.0.0"
+		PORT="${NOMAD_PORT_http}"
 	    }
             resources {
                 cpu     = 100

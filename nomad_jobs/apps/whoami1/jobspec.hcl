@@ -27,7 +27,7 @@ job "whoami" {
         network {
             port "http" {
                 to = -1
-                host_network = "private"
+		host_network = "private"
             }
         }
         service {
@@ -39,7 +39,7 @@ job "whoami" {
                 "name=whoami",
                 "traefik.enable=true",
                 "traefik.http.routers.whoami.rule=Host(`whoami.service.consul`) && PathPrefix(`/`)",
-                "traefik.http.routers.whoami.entrypoints=web",
+                "traefik.http.routers.whoami.entrypoints=web,websecure",
                 "traefik.http.routers.whoami.middlewares=strip-whoami",
                 "traefik.http.middlewares.strip-whoami.stripprefix.prefixes=/",
             ]
@@ -60,7 +60,7 @@ job "whoami" {
         task "whoami" {
             driver = "docker"
             config {
-                image = "jwilder/whoami:latest"
+                image = "jwilder/whoami"
                 ports = ["http"]
             }
 	    env {

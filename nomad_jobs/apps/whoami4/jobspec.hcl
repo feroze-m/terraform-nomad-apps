@@ -1,4 +1,4 @@
-job "qux" {
+job "proxima" {
     datacenters = "dc1"
     priority = "50"
     type = "service"
@@ -16,7 +16,7 @@ job "qux" {
         healthy_deadline = "5m"
     }
 
-    group "qux" {
+    group "proxima" {
         count = 1
         restart {
             interval = "30m"
@@ -27,21 +27,21 @@ job "qux" {
         network {
             port "http" {
                 to = -1
-                host_network = "private"
+		host_network = "private"
             }
         }
         service {
-            name = "qux"
+            name = "proxima"
             port = "http"
             tags = [
                 "type=service",
                 "environment=demo",
-                "name=qux",
+                "name=proxima",
                 "traefik.enable=true",
-                "traefik.http.routers.qux.rule=Host(`qux.service.consul`)",
-                "traefik.http.routers.qux.entrypoints=web,websecure",
-                "traefik.http.routers.qux.middlewares=strip-qux",
-                "traefik.http.middlewares.strip-qux.stripprefix.prefixes=/",
+                "traefik.http.routers.proxima.rule=Host(`proxima.service.consul`) && PathPrefix(`/beta`)",
+                "traefik.http.routers.proxima.entrypoints=web,websecure",
+                "traefik.http.routers.proxima.middlewares=strip-proxima",
+                "traefik.http.middlewares.strip-proxima.stripprefix.prefixes=/",
             ]
 
             check {
@@ -57,14 +57,15 @@ job "qux" {
                 ignore_warnings = "false"
             }
         }
-        task "qux" {
+        task "proxima" {
             driver = "docker"
             config {
-                image = "jwilder/whoami:latest"
-                ports = [ "http" ]
+                image = "jwilder/whoami"
+                ports = ["http"]
             }
 	    env {
 		HOST="0.0.0.0"
+		PORT="${NOMAD_PORT_http}"
 	    }
             resources {
                 cpu     = 100

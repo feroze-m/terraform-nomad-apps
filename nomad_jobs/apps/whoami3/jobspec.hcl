@@ -27,7 +27,7 @@ job "proxima" {
         network {
             port "http" {
                 to = -1
-                host_network = "private"
+		host_network = "private"
             }
         }
         service {
@@ -38,7 +38,7 @@ job "proxima" {
                 "environment=demo",
                 "name=proxima",
                 "traefik.enable=true",
-                "traefik.http.routers.proxima.rule=Host(`proxima.service.consul`)",
+                "traefik.http.routers.proxima.rule=Host(`proxima.service.consul`) && PathPrefix(`/alpha`)",
                 "traefik.http.routers.proxima.entrypoints=web,websecure",
                 "traefik.http.routers.proxima.middlewares=strip-proxima",
                 "traefik.http.middlewares.strip-proxima.stripprefix.prefixes=/",
@@ -60,11 +60,12 @@ job "proxima" {
         task "proxima" {
             driver = "docker"
             config {
-                image = "jwilder/whoami:latest"
-                ports = [ "http" ]
+                image = "jwilder/whoami"
+                ports = ["http"]
             }
 	    env {
 		HOST="0.0.0.0"
+		PORT="${NOMAD_PORT_http}"
 	    }
             resources {
                 cpu     = 100
