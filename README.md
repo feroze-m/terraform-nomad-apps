@@ -26,6 +26,7 @@ Terraform code to deploy resources in hertzner cloud
 8. Nomad service web UI is accessible at `http://<nomadserver_IP>:4646`
 
 # Important:
+# Notes about envs/$project.tfvars
 1. Defaults will deploy 0 servers, so make sure to have the count updated.
 	- 0 Bastion VM
 	- 0 Github runner
