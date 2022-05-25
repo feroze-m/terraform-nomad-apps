@@ -130,8 +130,8 @@ job "traefik" {
                 [http]
                     [http.routers]
                         [http.routers.nomad-ui]
-                            rule = "PathPrefix(`/nomad`)"
-                            service = "nomad-ui@consulcatalog"
+                            rule = "Host(`10.0.1.31`) && PathPrefix(`/nomad`)"
+                            service = "nomad-ui"
 			    entrypoints = ["web"]
 			    middlewares = ["dashboard-auth@consulcatalog"]
                     [http.services]
