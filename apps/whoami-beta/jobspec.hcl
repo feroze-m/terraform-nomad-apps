@@ -38,7 +38,7 @@ job "beta" {
                 "environment=demo",
                 "name=beta",
                 "traefik.enable=true",
-                "traefik.http.routers.beta.rule=Host(`proxima.service.consul`) && PathPrefix(`/beta`)",
+                "traefik.http.routers.beta.rule=Host(`proxima.ximity.co`) && PathPrefix(`/beta`)",
                 "traefik.http.routers.beta.entrypoints=web,websecure",
                 "traefik.http.routers.beta.middlewares=strip-beta",
                 "traefik.http.middlewares.strip-beta.stripprefix.prefixes=/",
