@@ -22,7 +22,7 @@ jobs:
     runs-on: self-hosted
     defaults:
       run:
-        working-directory: ./nomad_jobs
+        working-directory: ./
     steps:
       - uses: actions/checkout@v2
       - uses: hashicorp/setup-terraform@v2
