@@ -38,7 +38,7 @@ job "alpha" {
                 "environment=demo",
                 "name=alpha",
                 "traefik.enable=true",
-                "traefik.http.routers.alpha.rule=Host(`proxima.service.consul`) && PathPrefix(`/alpha`)",
+                "traefik.http.routers.alpha.rule=Host(`proxima.ximity.co`) && PathPrefix(`/alpha`)",
                 "traefik.http.routers.alpha.entrypoints=web,websecure",
                 "traefik.http.routers.alpha.middlewares=strip-alpha",
                 "traefik.http.middlewares.strip-alpha.stripprefix.prefixes=/",

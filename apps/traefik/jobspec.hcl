@@ -42,12 +42,12 @@ job "traefik" {
                 "environment=demo",
                 "name=traefik",
 		"traefik.enable=true",
-		"traefik.http.routers.dashboard.rule=(PathPrefix(`/api`) || PathPrefix(`/dashboard`))",
+		"traefik.http.routers.dashboard.rule=Host(`traefik.ximity.co`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))",
 		"traefik.http.routers.dashboard.service=api@internal",
 		"traefik.http.routers.dashboard.entrypoints=traefik",
 		"traefik.http.routers.dashboard.middlewares=dashboard-auth",
-		"traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$2a$04$KAcClbyEYxtF6s1UeEG1HOLLZTUVTfu4W0PPQ1rftX3CG.Oh0.pf2",
-		"traefik.http.middlewares.dashboard-auth.basicauth.removeHeader=true",
+		"traefik.http.middlewares.dashboard-auth.basicAuth.users=admin:$2a$04$KAcClbyEYxtF6s1UeEG1HOLLZTUVTfu4W0PPQ1rftX3CG.Oh0.pf2",
+		"traefik.http.middlewares.dashboard-auth.basicAuth.removeHeader=true",
 
 #                "traefik.http.routers.https.rule=Host(`traefik.proxima-myapp.com)",
 #                "traefik.http.routers.https.entrypoints=websecure",
@@ -130,18 +130,18 @@ job "traefik" {
                 [http]
                     [http.routers]
                         [http.routers.nomad-ui]
-                            rule = "Host(`nomad.ximity.co`) && Path(`/`)"
+                            rule = "Host(`nomad.ximity.co`) && PathPrefix(`/`)"
                             service = "nomad-ui"
-			    entrypoints = ["web"]
-			    middlewares = ["dashboard-auth@consulcatalog"]
+			    entrypoints = ["web", "websecure"]
+			    middlewares = ["dashboard-auth"]
                     [http.services]
                         [http.services.nomad-ui.loadBalancer]
                             [[http.services.nomad-ui.loadBalancer.servers]]
-                                url = "http://nomadserver01.node.consul:4646/"
+                                url = "http://nomadserver01.node.consul:4646/ui/"
                             [[http.services.nomad-ui.loadBalancer.servers]]
-                                url = "http://nomadserver02.node.consul:4646/"
+                                url = "http://nomadserver02.node.consul:4646/ui/"
                             [[http.services.nomad-ui.loadBalancer.servers]]
-                                url = "http://10.0.1.23:4646/"
+                                url = "http://10.0.1.23:4646/ui"
                 EOF
                     destination = "local/nomad-ui.toml"
             }

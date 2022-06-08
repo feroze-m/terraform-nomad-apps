@@ -38,7 +38,7 @@ job "proxima" {
                 "environment=demo",
                 "name=proxima",
                 "traefik.enable=true",
-                "traefik.http.routers.proxima.rule=Host(`proxima.service.consul`) && PathPrefix(`/`)",
+                "traefik.http.routers.proxima.rule=Host(`proxima.ximity.co`) && PathPrefix(`/`)",
                 "traefik.http.routers.proxima.entrypoints=web,websecure",
                 "traefik.http.routers.proxima.middlewares=strip-proxima",
                 "traefik.http.middlewares.strip-proxima.stripprefix.prefixes=/",
