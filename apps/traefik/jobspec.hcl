@@ -130,18 +130,18 @@ job "traefik" {
                 [http]
                     [http.routers]
                         [http.routers.nomad-ui]
-                            rule = "Host(`nomad.ximity.co`) && Path(`/`)"
+                            rule = "Host(`nomad.ximity.co`) && Path(`/ui`)"
                             service = "nomad-ui"
-			    entrypoints = ["web,websecure"]
+			    entrypoints = ["web", "websecure"]
 			    middlewares = ["dashboard-auth@consulcatalog"]
                     [http.services]
                         [http.services.nomad-ui.loadBalancer]
                             [[http.services.nomad-ui.loadBalancer.servers]]
-                                url = "http://nomadserver01.node.consul:4646/ui"
+                                url = "http://nomadserver01.node.consul:4646/ui/"
                             [[http.services.nomad-ui.loadBalancer.servers]]
-                                url = "http://nomadserver02.node.consul:4646/ui"
+                                url = "http://nomadserver02.node.consul:4646/ui/"
                             [[http.services.nomad-ui.loadBalancer.servers]]
-                                url = "http://10.0.1.23:4646/ui"
+                                url = "http://10.0.1.23:4646/ui/"
                 EOF
                     destination = "local/nomad-ui.toml"
             }
