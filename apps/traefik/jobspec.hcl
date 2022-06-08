@@ -46,8 +46,8 @@ job "traefik" {
 		"traefik.http.routers.dashboard.service=api@internal",
 		"traefik.http.routers.dashboard.entrypoints=traefik",
 		"traefik.http.routers.dashboard.middlewares=dashboard-auth",
-		"traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$2a$04$KAcClbyEYxtF6s1UeEG1HOLLZTUVTfu4W0PPQ1rftX3CG.Oh0.pf2",
-		"traefik.http.middlewares.dashboard-auth.basicauth.removeHeader=true",
+		"traefik.http.middlewares.dashboard-auth.basicAuth.users=admin:$2a$04$KAcClbyEYxtF6s1UeEG1HOLLZTUVTfu4W0PPQ1rftX3CG.Oh0.pf2",
+		"traefik.http.middlewares.dashboard-auth.basicAuth.removeHeader=true",
 
 #                "traefik.http.routers.https.rule=Host(`traefik.proxima-myapp.com)",
 #                "traefik.http.routers.https.entrypoints=websecure",
