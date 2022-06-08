@@ -133,7 +133,7 @@ job "traefik" {
                             rule = "Host(`nomad.ximity.co`) && Path(`/ui`)"
                             service = "nomad-ui"
 			    entrypoints = ["web", "websecure"]
-			    middlewares = ["dashboard-auth@consulcatalog"]
+			    middlewares = ["dashboard-auth"]
                     [http.services]
                         [http.services.nomad-ui.loadBalancer]
                             [[http.services.nomad-ui.loadBalancer.servers]]
