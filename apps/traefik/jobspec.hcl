@@ -42,7 +42,7 @@ job "traefik" {
                 "environment=demo",
                 "name=traefik",
 		"traefik.enable=true",
-		"traefik.http.routers.dashboard.rule=(PathPrefix(`/api`) || PathPrefix(`/dashboard`))",
+		"traefik.http.routers.dashboard.rule=Host(`traefik.ximity.co`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))",
 		"traefik.http.routers.dashboard.service=api@internal",
 		"traefik.http.routers.dashboard.entrypoints=traefik",
 		"traefik.http.routers.dashboard.middlewares=dashboard-auth",
