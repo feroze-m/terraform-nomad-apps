@@ -141,7 +141,7 @@ job "traefik" {
                             [[http.services.nomad-ui.loadBalancer.servers]]
                                 url = "http://nomadserver02.node.consul:4646/ui/"
                             [[http.services.nomad-ui.loadBalancer.servers]]
-                                url = "http://10.0.1.23:4646/ui/"
+                                url = "http://10.0.1.23:4646/ui"
                 EOF
                     destination = "local/nomad-ui.toml"
             }
